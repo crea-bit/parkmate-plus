@@ -3,7 +3,7 @@ import axios from 'axios';
 // ─── Axios Instance ────────────────────────────────────────────────────────────
 // Pre-configured to talk to the Spring Boot backend on port 8080.
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'https://parkmate-plus-backend.onrender.com',
   headers: {
     'Content-Type': 'application/json',
   },
