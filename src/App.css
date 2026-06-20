@@ -1,0 +1,123 @@
+/* ─── ParkMate Plus — App.css ───────────────────────────────────────────────
+   All design system tokens and component styles live in index.css.
+   This file is kept for any legacy class references still used in JSX.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Legacy aliases — map old class names to the new design system so existing
+   JSX that still uses them continues to render correctly. */
+
+.page {
+  min-height: calc(100vh - 64px);
+  background: var(--bg);
+  padding: 36px 40px;
+  color: var(--text);
+}
+
+.center-page {
+  min-height: calc(100vh - 64px);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  max-width: 520px;
+}
+.card:hover {
+  border-color: rgba(0, 194, 255, 0.2);
+  box-shadow: var(--shadow-md);
+}
+
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--text);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.95rem;
+  padding: 11px 14px;
+  width: 100%;
+  transition: border-color var(--transition), box-shadow var(--transition),
+    background var(--transition);
+  font-family: inherit;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--primary-glow-sm);
+  box-shadow: 0 0 0 3px rgba(0, 194, 255, 0.12);
+}
+.input::placeholder { color: var(--text-dim); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  background: linear-gradient(135deg, #00c2ff 0%, #0099cc 100%);
+  color: #05101a;
+  box-shadow: 0 4px 14px rgba(0, 194, 255, 0.25);
+  letter-spacing: 0.2px;
+}
+.btn:hover {
+  background: linear-gradient(135deg, #26ceff 0%, #00b8f5 100%);
+  box-shadow: 0 6px 22px rgba(0, 194, 255, 0.4);
+  transform: translateY(-1px);
+}
+.btn:active { transform: translateY(0); }
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+}
+.btn-danger:hover {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.25);
+}
+.btn-success:hover {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35);
+}
