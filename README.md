@@ -1,16 +1,44 @@
-# React + Vite
+# ParkMate Plus
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ParkMate Plus is a smart valet parking management system built using:
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Frontend
+- React.js
+- Vite
+- Axios
+- React Router
 
-## React Compiler
+### Backend
+- Spring Boot
+- Spring Data JPA
+- REST APIs
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Database
+- MySQL
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### User
+- Register/Login
+- Add Vehicle
+- Create Parking Booking
+- Track Vehicle
+- View Parking History
+- Rate Assistant
+
+### Assistant
+- Login
+- Accept Parking Requests
+- Update Booking Status
+- Complete Parking Tasks
+
+### Admin
+- Dashboard Analytics
+- User Management
+- Booking Monitoring
+- Rating Analytics
+
+## Developed By
+Mukka Shyni Sri
