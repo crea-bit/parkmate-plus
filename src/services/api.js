@@ -1,37 +1,51 @@
-import axios from 'axios';
+import axios from "axios";
 
-// ─── Axios Instance ────────────────────────────────────────────────────────────
-// Pre-configured to talk to the Spring Boot backend on port 8080.
+// Local development:
+// http://localhost:8080
+//
+// Production:
+// Set VITE_API_URL in Vercel to your Render backend URL.
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 const api = axios.create({
-  baseURL: 'https://parkmate-plus-backend.onrender.com',
+  baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-// ─── Request Interceptor ───────────────────────────────────────────────────────
-// Automatically attaches the JWT token (if present) to every outgoing request.
+// Attach JWT token to every request
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// ─── Response Interceptor ─────────────────────────────────────────────────────
-// Handles 401 Unauthorized globally — clears storage and redirects to login.
+// Handle authentication errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("assistant");
+
+      window.location.href = "/login";
     }
+
     return Promise.reject(error);
   }
 );

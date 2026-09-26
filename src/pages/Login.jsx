@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
+import logo from "../assets/parkmate-logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,51 +14,168 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      // Clear previous login data
+      localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("assistant");
 
       let response;
 
+      // =========================
+      // USER LOGIN
+      // =========================
       if (role === "USER") {
         response = await api.post("/users/login", {
           email,
           password,
         });
 
-        if (!response.data || !response.data.id) {
-          alert("Login failed: User ID not received from backend");
-          console.log("User login response:", response.data);
+        console.log("User login response:", response.data);
+
+        if (
+          !response.data ||
+          !response.data.token ||
+          !response.data.user ||
+          !response.data.user.id
+        ) {
+          alert("Login failed: Invalid response from backend");
           return;
         }
 
-        localStorage.setItem("user", JSON.stringify(response.data));
+        // Make sure selected role matches backend role
+        if (response.data.user.role !== "USER") {
+          alert("This account is not registered as a User.");
+          return;
+        }
+
+        // Save JWT token
+        localStorage.setItem("token", response.data.token);
+
+        // Save user information
+        localStorage.setItem(
+          "user",
+          JSON.stringify(response.data.user)
+        );
+
+        console.log("User JWT token saved successfully");
+
         navigate("/dashboard/user");
       }
 
+      // =========================
+      // ASSISTANT LOGIN
+      // =========================
       else if (role === "ASSISTANT") {
         response = await api.post("/assistants/login", {
           email,
+          password,
         });
 
-        if (!response.data || !response.data.id) {
-          alert("Login failed: Assistant ID not received from backend");
-          console.log("Assistant login response:", response.data);
+        console.log(
+          "Assistant login response:",
+          response.data
+        );
+
+        if (
+          !response.data ||
+          !response.data.token ||
+          !response.data.assistant ||
+          !response.data.assistant.id
+        ) {
+          alert(
+            "Login failed: Invalid assistant response from backend"
+          );
           return;
         }
 
-        localStorage.setItem("assistant", JSON.stringify(response.data));
+        // Save Assistant JWT
+        localStorage.setItem(
+          "token",
+          response.data.token
+        );
+
+        // Save Assistant information
+        localStorage.setItem(
+          "assistant",
+          JSON.stringify(response.data.assistant)
+        );
+
+        console.log(
+          "Assistant JWT saved successfully"
+        );
+
         navigate("/dashboard/assistant");
       }
 
+      // =========================
+      // ADMIN LOGIN
+      // =========================
       else if (role === "ADMIN") {
-        localStorage.removeItem("user");
-        localStorage.removeItem("assistant");
+        response = await api.post("/users/login", {
+          email,
+          password,
+        });
+
+        console.log(
+          "Admin login response:",
+          response.data
+        );
+
+        if (
+          !response.data ||
+          !response.data.token ||
+          !response.data.user ||
+          !response.data.user.id
+        ) {
+          alert(
+            "Login failed: Invalid response from backend"
+          );
+          return;
+        }
+
+        // IMPORTANT:
+        // Account must actually have ADMIN role
+        if (response.data.user.role !== "ADMIN") {
+          alert(
+            "Access denied: This account is not an Admin."
+          );
+          return;
+        }
+
+        // Save Admin JWT
+        localStorage.setItem(
+          "token",
+          response.data.token
+        );
+
+        // Save Admin information
+        localStorage.setItem(
+          "user",
+          JSON.stringify(response.data.user)
+        );
+
+        console.log(
+          "Admin JWT saved successfully"
+        );
+
         navigate("/dashboard/admin");
       }
 
     } catch (error) {
-      alert("Login failed. Check email/password.");
-      console.log(error);
+      console.log("Login error:", error);
+
+      if (error.response?.status === 401) {
+        alert(
+          error.response?.data?.message ||
+          "Invalid email or password."
+        );
+      } else if (error.response?.status === 403) {
+        alert(
+          "Access denied. You do not have permission to access this account."
+        );
+      } else {
+        alert("Login failed. Please try again.");
+      }
     }
   };
 
@@ -66,70 +184,151 @@ const Login = () => {
       <div className="pm-auth-card">
 
         <div className="pm-auth-header">
-          <div className="pm-auth-brand">
-            <div className="pm-auth-brand-icon">🅿</div>
-            <div className="pm-auth-brand-name">
-              Park<span>Mate</span> Plus
-            </div>
+
+          {/* =========================
+              LOGO
+          ========================= */}
+          <div className="pm-auth-logo">
+            <img
+              src={logo}
+              alt="ParkMate Plus Logo"
+            />
           </div>
-          <h1 className="pm-auth-title">Welcome back</h1>
-          <p className="pm-auth-subtitle">Sign in to your account to continue</p>
+
+          {/* =========================
+              BRAND NAME
+          ========================= */}
+          <div className="pm-auth-brand-name">
+            Park<span>Mate</span> Plus
+          </div>
+
+          <h1 className="pm-auth-title">
+            Welcome back
+          </h1>
+
+          <p className="pm-auth-subtitle">
+            Sign in to your account to continue
+          </p>
+
         </div>
 
-        <form className="pm-form" onSubmit={handleLogin}>
+        <form
+          className="pm-form"
+          onSubmit={handleLogin}
+        >
 
+          {/* =========================
+              ROLE
+          ========================= */}
           <div className="pm-field">
-            <label className="pm-label">Role</label>
+
+            <label className="pm-label">
+              Role
+            </label>
+
             <select
               className="pm-select"
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => {
+                setRole(e.target.value);
+
+                // Clear credentials when switching role
+                setEmail("");
+                setPassword("");
+              }}
             >
-              <option value="USER">User</option>
-              <option value="ASSISTANT">Assistant</option>
-              <option value="ADMIN">Admin</option>
+
+              <option value="USER">
+                User
+              </option>
+
+              <option value="ASSISTANT">
+                Assistant
+              </option>
+
+              <option value="ADMIN">
+                Admin
+              </option>
+
             </select>
+
           </div>
 
+          {/* =========================
+              EMAIL
+          ========================= */}
           <div className="pm-field">
-            <label className="pm-label">Email Address</label>
+
+            <label className="pm-label">
+              Email Address
+            </label>
+
             <input
               className="pm-input"
               type="email"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
               required
             />
+
           </div>
 
-          {role === "USER" && (
-            <div className="pm-field">
-              <label className="pm-label">Password</label>
-              <input
-                className="pm-input"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          )}
+          {/* =========================
+              PASSWORD
+          ========================= */}
+          <div className="pm-field">
 
+            <label className="pm-label">
+              Password
+            </label>
+
+            <input
+              className="pm-input"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              required
+            />
+
+          </div>
+
+          {/* =========================
+              LOGIN BUTTON
+          ========================= */}
           <div style={{ marginTop: "8px" }}>
-            <button className="pm-btn pm-btn-primary pm-btn-full" type="submit">
-              Sign In
+
+            <button
+              className="pm-btn pm-btn-primary pm-btn-full"
+              type="submit"
+            >
+              Login
             </button>
+
           </div>
 
           <div className="pm-divider" />
 
+          {/* =========================
+              REGISTER LINK
+          ========================= */}
           <p className="pm-auth-footer">
+
             New to ParkMate?{" "}
-            <Link to="/register">Create an account</Link>
+
+            <Link to="/register">
+              Create an account
+            </Link>
+
           </p>
+
         </form>
+
       </div>
     </div>
   );

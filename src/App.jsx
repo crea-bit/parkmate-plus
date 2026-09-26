@@ -1,13 +1,33 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-// Pages
+import { ThemeProvider } from "./context/ThemeContext";
+
+// =========================
+// LANDING PAGE
+// =========================
+import LandingPage from "./pages/LandingPage";
+
+// =========================
+// AUTHENTICATION
+// =========================
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
+// =========================
+// DASHBOARDS
+// =========================
 import UserDashboard from "./pages/UserDashboard";
 import AssistantDashboard from "./pages/AssistantDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 
+// =========================
+// USER PAGES
+// =========================
 import AddVehicle from "./pages/AddVehicle";
 import CreateBooking from "./pages/CreateBooking";
 import TrackBooking from "./pages/TrackBooking";
@@ -15,44 +35,191 @@ import Rating from "./pages/Rating";
 import ParkingHistory from "./pages/ParkingHistory";
 import Notifications from "./pages/Notifications";
 
+// =========================
+// SECURITY
+// =========================
+import ProtectedRoute from "./components/ProtectedRoute";
+
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <ThemeProvider>
+      <BrowserRouter>
 
-        {/* Default Route */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Routes>
 
-        {/* Authentication */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+          {/* ==================================================
+              LANDING PAGE
+              First page when user opens ParkMate Plus
+          ================================================== */}
 
-        {/* Dashboards */}
-        <Route path="/dashboard/user" element={<UserDashboard />} />
-        <Route
-          path="/dashboard/assistant"
-          element={<AssistantDashboard />}
-        />
-        <Route path="/dashboard/admin" element={<AdminDashboard />} />
+          <Route
+            path="/"
+            element={<LandingPage />}
+          />
 
-        {/* Vehicle */}
-        <Route path="/vehicles/add" element={<AddVehicle />} />
 
-        {/* Booking */}
-        <Route path="/bookings/create" element={<CreateBooking />} />
-        <Route path="/bookings/track" element={<TrackBooking />} />
+          {/* ==================================================
+              AUTHENTICATION
+          ================================================== */}
 
-        {/* Rating */}
-        <Route path="/ratings/add" element={<Rating />} />
+          <Route
+            path="/login"
+            element={<Login />}
+          />
 
-        {/* Parking History */}
-        <Route path="/parking/history" element={<ParkingHistory />} />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
-        {/* Catch All */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-        <Route path="/notifications" element={<Notifications />} />
-      </Routes>
-    </BrowserRouter>
+
+          {/* ==================================================
+              USER DASHBOARD
+          ================================================== */}
+
+          <Route
+            path="/dashboard/user"
+            element={
+              <ProtectedRoute allowedRole="USER">
+                <UserDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              ASSISTANT DASHBOARD
+          ================================================== */}
+
+          <Route
+            path="/dashboard/assistant"
+            element={
+              <ProtectedRoute allowedRole="ASSISTANT">
+                <AssistantDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              ADMIN DASHBOARD
+          ================================================== */}
+
+          <Route
+            path="/dashboard/admin"
+            element={
+              <ProtectedRoute allowedRole="ADMIN">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              ADD VEHICLE
+              USER ONLY
+          ================================================== */}
+
+          <Route
+            path="/vehicles/add"
+            element={
+              <ProtectedRoute allowedRole="USER">
+                <AddVehicle />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              CREATE BOOKING
+              USER ONLY
+          ================================================== */}
+
+          <Route
+            path="/bookings/create"
+            element={
+              <ProtectedRoute allowedRole="USER">
+                <CreateBooking />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              TRACK BOOKING
+              USER ONLY
+          ================================================== */}
+
+          <Route
+            path="/bookings/track"
+            element={
+              <ProtectedRoute allowedRole="USER">
+                <TrackBooking />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              RATING
+              USER ONLY
+          ================================================== */}
+
+          <Route
+            path="/ratings/add"
+            element={
+              <ProtectedRoute allowedRole="USER">
+                <Rating />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              PARKING HISTORY
+              USER ONLY
+          ================================================== */}
+
+          <Route
+            path="/parking/history"
+            element={
+              <ProtectedRoute allowedRole="USER">
+                <ParkingHistory />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              NOTIFICATIONS
+              AUTHENTICATED USERS
+          ================================================== */}
+
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* ==================================================
+              UNKNOWN URL
+              SEND USER BACK TO LANDING PAGE
+          ================================================== */}
+
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+
+        </Routes>
+
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

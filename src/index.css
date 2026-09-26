@@ -1,316 +1,2337 @@
-/* ══════════════════════════════════════════════════════════
-   ParkMate Plus — Global Design System
-   Dark Theme · Primary #00c2ff · BG #101820 · Card #1f2937
-   ══════════════════════════════════════════════════════════ */
+/* ============================================================
+   PARKMATE PLUS
+   GLOBAL DESIGN SYSTEM
+   LIGHT + DARK THEME
+   RESPONSIVE — LAPTOP + TABLET + MOBILE
+   ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* ── CSS Variables ───────────────────────────────────────── */
-:root {
-  --primary:        #00c2ff;
-  --primary-dark:   #0099cc;
-  --primary-glow:   rgba(0, 194, 255, 0.18);
-  --primary-glow-sm:rgba(0, 194, 255, 0.08);
-  --bg:             #101820;
-  --bg-alt:         #141e2b;
-  --card:           #1f2937;
-  --card-hover:     #263244;
-  --border:         rgba(255,255,255,0.07);
-  --border-accent:  rgba(0,194,255,0.3);
-  --text:           #e2e8f0;
-  --text-muted:     #8ba3be;
-  --text-dim:       #4a6280;
-  --success:        #22c55e;
-  --warning:        #f59e0b;
-  --danger:         #ef4444;
-  --radius-sm:      8px;
-  --radius-md:      12px;
-  --radius-lg:      18px;
-  --radius-xl:      24px;
-  --shadow-sm:      0 2px 8px rgba(0,0,0,0.3);
-  --shadow-md:      0 4px 20px rgba(0,0,0,0.4);
-  --shadow-lg:      0 8px 40px rgba(0,0,0,0.5);
-  --shadow-glow:    0 0 24px rgba(0,194,255,0.15);
-  --transition:     0.22s ease;
+
+/* ============================================================
+   DARK THEME — DEFAULT
+   ============================================================ */
+
+:root,
+html[data-theme="dark"] {
+
+  color-scheme: dark;
+
+  --primary: #00c2ff;
+  --primary-dark: #0099cc;
+  --primary-glow: rgba(0, 194, 255, 0.18);
+  --primary-glow-sm: rgba(0, 194, 255, 0.08);
+
+  --bg: #0f1720;
+  --bg-alt: #141e2b;
+
+  --card: #1f2937;
+  --card-hover: #263244;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(0, 194, 255, 0.35);
+
+  --text: #f8fafc;
+  --text-muted: #9db4cc;
+  --text-dim: #64748b;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --input-bg: rgba(255,255,255,0.04);
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.25);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.40);
+
+  --transition: 0.25s ease;
 }
 
-/* ── Reset ───────────────────────────────────────────────── */
-*, *::before, *::after {
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+
+html[data-theme="light"] {
+
+  color-scheme: light;
+
+  --primary: #0077a8;
+  --primary-dark: #005f86;
+  --primary-glow: rgba(0,119,168,0.12);
+  --primary-glow-sm: rgba(0,119,168,0.06);
+
+  --bg: #f4f7fb;
+  --bg-alt: #eaf0f6;
+
+  --card: #ffffff;
+  --card-hover: #f7fbff;
+
+  --border: rgba(15,23,42,0.10);
+  --border-accent: rgba(0,119,168,0.30);
+
+  --text: #172033;
+  --text-muted: #607086;
+  --text-dim: #8996a8;
+
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #dc2626;
+
+  --input-bg: #ffffff;
+
+  --shadow-sm: 0 2px 8px rgba(15,23,42,0.08);
+  --shadow-md: 0 8px 24px rgba(15,23,42,0.10);
+  --shadow-lg: 0 12px 40px rgba(15,23,42,0.14);
+}
+
+
+/* ============================================================
+   GLOBAL RESET
+   ============================================================ */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body, #root {
-  height: 100%;
+
+html,
+body,
+#root {
   width: 100%;
+  min-height: 100%;
 }
+
+
+html {
+  scroll-behavior: smooth;
+}
+
 
 body {
-  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  background-color: var(--bg);
+
+  font-family:
+    'Inter',
+    'Segoe UI',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+
+  background: var(--bg);
   color: var(--text);
+
+  line-height: 1.6;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
+
+
+#root {
+
+  min-height: 100vh;
+
+  background:
+    var(--bg);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+
+/* ============================================================
+   LINKS
+   ============================================================ */
 
 a {
+
   color: var(--primary);
+
   text-decoration: none;
-  transition: color var(--transition);
+
+  transition:
+    color var(--transition),
+    background var(--transition),
+    transform var(--transition);
 }
-a:hover { color: #7de0ff; }
 
-button { cursor: pointer; border: none; outline: none; }
 
-input, textarea, select {
+a:hover {
+
+  color: var(--primary-dark);
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+button {
+
   font-family: inherit;
-}
 
-/* ── Scrollbar ───────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb {
-  background: rgba(0,194,255,0.25);
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover { background: rgba(0,194,255,0.45); }
+  cursor: pointer;
 
-/* ══════════════════════════════════════════════════════════
-   NAVBAR
-   ══════════════════════════════════════════════════════════ */
-.pm-nav {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: rgba(16, 24, 32, 0.85);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 32px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
-}
-
-.pm-nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text);
-}
-.pm-nav-logo span {
-  color: var(--primary);
-}
-.pm-nav-logo-icon {
-  width: 34px;
-  height: 34px;
-  background: var(--primary-glow);
-  border: 1.5px solid var(--border-accent);
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-}
-
-.pm-nav-links {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pm-nav-link {
-  color: var(--text-muted);
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 7px 14px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition);
-  text-decoration: none;
-  position: relative;
-}
-.pm-nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%) scaleX(0);
-  width: 16px;
-  height: 2px;
-  background: var(--primary);
-  border-radius: 2px;
-  transition: transform var(--transition);
-}
-.pm-nav-link:hover {
-  color: var(--text);
-  background: var(--primary-glow-sm);
-}
-.pm-nav-link:hover::after { transform: translateX(-50%) scaleX(1); }
-
-.pm-nav-logout {
-  background: rgba(239, 68, 68, 0.12);
-  color: #fc8181;
-  border: 1px solid rgba(239,68,68,0.25);
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 7px 18px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition);
-  margin-left: 8px;
-}
-.pm-nav-logout:hover {
-  background: rgba(239, 68, 68, 0.22);
-  color: #fca5a5;
-  border-color: rgba(239,68,68,0.45);
-  transform: translateY(-1px);
-}
-
-/* ══════════════════════════════════════════════════════════
-   AUTH PAGES (Login / Register)
-   ══════════════════════════════════════════════════════════ */
-.pm-auth-bg {
-  min-height: 100vh;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Decorative blobs */
-.pm-auth-bg::before {
-  content: '';
-  position: absolute;
-  top: -160px;
-  right: -160px;
-  width: 480px;
-  height: 480px;
-  background: radial-gradient(circle, rgba(0,194,255,0.12) 0%, transparent 70%);
-  pointer-events: none;
-}
-.pm-auth-bg::after {
-  content: '';
-  position: absolute;
-  bottom: -120px;
-  left: -120px;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(0,194,255,0.07) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.pm-auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 44px 40px;
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
-  position: relative;
-  z-index: 1;
-  animation: slideUp 0.4s ease;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.pm-auth-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-.pm-auth-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.pm-auth-brand-icon {
-  width: 44px;
-  height: 44px;
-  background: var(--primary-glow);
-  border: 2px solid var(--border-accent);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-}
-.pm-auth-brand-name {
-  font-size: 1.45rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text);
-}
-.pm-auth-brand-name span { color: var(--primary); }
-
-.pm-auth-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-.pm-auth-subtitle {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-/* ── Form Primitives ─────────────────────────────────────── */
-.pm-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.pm-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.pm-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-}
-
-.pm-input {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-size: 0.95rem;
-  padding: 11px 14px;
-  transition: all var(--transition);
-  width: 100%;
-}
-.pm-input:focus {
   outline: none;
-  border-color: var(--primary);
-  background: var(--primary-glow-sm);
-  box-shadow: 0 0 0 3px rgba(0,194,255,0.12);
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
-.pm-input::placeholder { color: var(--text-dim); }
-.pm-input[readonly] {
-  opacity: 0.6;
+
+
+button:active {
+
+  transform: translateY(0);
+}
+
+
+button:disabled {
+
+  opacity: 0.55;
+
   cursor: not-allowed;
 }
 
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+
+input,
+textarea,
+select {
+
+  font-family: inherit;
+
+  color: var(--text);
+}
+
+
+input::placeholder,
+textarea::placeholder {
+
+  color: var(--text-dim);
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+::-webkit-scrollbar {
+
+  width: 7px;
+  height: 7px;
+}
+
+
+::-webkit-scrollbar-track {
+
+  background: var(--bg);
+}
+
+
+::-webkit-scrollbar-thumb {
+
+  background: rgba(0,194,255,0.30);
+
+  border-radius: 999px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+
+  background: rgba(0,194,255,0.55);
+}
+
+
+/* ============================================================
+   THEME TRANSITIONS
+   ============================================================ */
+
+body,
+#root,
+.pm-page,
+.pm-card,
+.pm-nav,
+.pm-navbar,
+.pm-profile-card,
+.pm-stat-card,
+.pm-action-card,
+.pm-booking-card,
+.pm-form-card,
+.pm-auth-card,
+.pm-input,
+.pm-select,
+.pm-textarea {
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* ============================================================
+   NAVBAR — OLD + NEW CLASS SUPPORT
+   ============================================================ */
+
+.pm-nav {
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 1000;
+
+  width: 100%;
+
+  height: 64px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 32px;
+
+  background: var(--card);
+
+  border-bottom: 1px solid var(--border);
+
+  box-shadow: var(--shadow-sm);
+
+  backdrop-filter: blur(16px);
+
+  -webkit-backdrop-filter: blur(16px);
+}
+
+
+.pm-nav-logo {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  font-size: 1.25rem;
+
+  font-weight: 800;
+
+  color: var(--text);
+}
+
+
+.pm-nav-logo span {
+
+  color: var(--primary);
+}
+
+
+.pm-nav-logo-icon {
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: var(--primary-glow);
+
+  border: 1px solid var(--border-accent);
+
+  color: var(--primary);
+
+  font-weight: 800;
+}
+
+
+.pm-nav-links {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+.pm-nav-link {
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  color: var(--text-muted);
+
+  font-size: 0.88rem;
+
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+
+.pm-nav-link:hover {
+
+  color: var(--primary);
+
+  background: var(--primary-glow-sm);
+}
+
+
+.pm-nav-logout {
+
+  margin-left: 8px;
+
+  padding: 8px 16px;
+
+  border-radius: 8px;
+
+  background: rgba(239,68,68,0.10);
+
+  color: var(--danger);
+
+  border: 1px solid rgba(239,68,68,0.25);
+
+  font-weight: 700;
+}
+
+
+.pm-nav-logout:hover {
+
+  background: rgba(239,68,68,0.16);
+
+  transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   PROFESSIONAL NAVBAR
+   ============================================================ */
+
+.pm-navbar {
+
+  width: 100%;
+
+  min-height: 68px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 10px 30px;
+
+  background: var(--card);
+
+  border-bottom: 1px solid var(--border);
+
+  position: sticky;
+
+  top: 0;
+
+  z-index: 1000;
+
+  box-sizing: border-box;
+
+  backdrop-filter: blur(14px);
+
+  -webkit-backdrop-filter: blur(14px);
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+.pm-navbar-brand {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  text-decoration: none;
+
+  flex-shrink: 0;
+}
+
+
+.pm-navbar-logo-icon {
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: var(--primary-glow);
+
+  color: var(--primary);
+
+  border: 1px solid var(--border-accent);
+
+  font-size: 18px;
+
+  font-weight: 800;
+}
+
+
+.pm-navbar-brand-text {
+
+  font-size: 21px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.4px;
+
+  white-space: nowrap;
+
+  color: var(--text);
+}
+
+
+.pm-brand-white {
+
+  color: var(--text);
+}
+
+
+.pm-brand-blue {
+
+  color: var(--primary);
+}
+
+
+.pm-navbar-links {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 6px;
+
+  margin-left: auto;
+}
+
+
+.pm-theme-toggle {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 38px;
+
+  padding: 8px 13px;
+
+  border-radius: 10px;
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  font-family: inherit;
+
+  font-size: 0.84rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.pm-theme-toggle:hover {
+
+  background: var(--primary-glow);
+
+  border-color: var(--border-accent);
+
+  color: var(--primary);
+
+  transform: translateY(-1px);
+}
+
+
+.pm-theme-icon {
+
+  font-size: 1rem;
+
+  line-height: 1;
+}
+
+
+.pm-theme-text {
+
+  line-height: 1;
+}
+
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+
+.pm-page {
+
+  min-height: calc(100vh - 64px);
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  padding: 36px 40px;
+}
+
+
+.pm-page-center {
+
+  min-height: calc(100vh - 64px);
+
+  background: var(--bg);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 32px 24px;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+
+.pm-page-title {
+
+  font-size: 1.8rem;
+
+  font-weight: 800;
+
+  color: var(--text);
+}
+
+
+.pm-page-subtitle {
+
+  color: var(--text-muted);
+
+  font-size: 0.95rem;
+}
+
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.pm-card {
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 18px;
+
+  padding: 24px;
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+.pm-card:hover {
+
+  border-color: var(--border-accent);
+
+  box-shadow: var(--shadow-md);
+}
+
+
+/* ============================================================
+   PROFILE CARD
+   ============================================================ */
+
+.pm-profile-card {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--card),
+      var(--card-hover)
+    );
+
+  color: var(--text);
+
+  border: 1px solid var(--border-accent);
+
+  border-radius: 18px;
+
+  padding: 24px 28px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 32px;
+
+  box-shadow: var(--shadow-md);
+}
+
+
+.pm-profile-avatar {
+
+  width: 56px;
+
+  height: 56px;
+
+  background: var(--primary);
+
+  border-radius: 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 1.5rem;
+
+  font-weight: 700;
+
+  color: white;
+
+  flex-shrink: 0;
+}
+
+
+.pm-profile-info {
+
+  flex: 1;
+}
+
+
+.pm-profile-name {
+
+  color: var(--text);
+
+  font-weight: 700;
+}
+
+
+.pm-profile-meta {
+
+  color: var(--text-muted);
+
+  font-size: 0.85rem;
+}
+
+
+.pm-profile-badge {
+
+  background: var(--primary-glow);
+
+  border: 1px solid var(--border-accent);
+
+  color: var(--primary);
+
+  font-size: 0.75rem;
+
+  font-weight: 700;
+
+  padding: 5px 12px;
+
+  border-radius: 999px;
+}
+
+
+/* ============================================================
+   STATISTICS
+   ============================================================ */
+
+.pm-stat-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 36px;
+}
+
+
+.pm-stat-card {
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 14px;
+
+  padding: 22px;
+
+  box-shadow: var(--shadow-sm);
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+
+.pm-stat-card::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  top: 0;
+
+  width: 100%;
+
+  height: 3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--primary),
+      transparent
+    );
+}
+
+
+.pm-stat-card:hover {
+
+  transform: translateY(-2px);
+
+  border-color: var(--border-accent);
+
+  box-shadow: var(--shadow-md);
+}
+
+
+.pm-stat-value {
+
+  color: var(--primary);
+
+  font-size: 2rem;
+
+  font-weight: 800;
+}
+
+
+.pm-stat-label {
+
+  color: var(--text-muted);
+
+  font-size: 0.82rem;
+}
+
+
+/* ============================================================
+   ACTION CARDS
+   ============================================================ */
+
+.pm-actions-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 18px;
+}
+
+
+.pm-action-card {
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 18px;
+
+  padding: 25px;
+
+  text-decoration: none;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+.pm-action-card:hover {
+
+  background: var(--card-hover);
+
+  color: var(--text);
+
+  border-color: var(--border-accent);
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    var(--shadow-md),
+    var(--shadow-glow);
+}
+
+
+.pm-action-title {
+
+  color: var(--text);
+
+  font-weight: 700;
+}
+
+
+.pm-action-desc {
+
+  color: var(--text-muted);
+}
+
+
+/* ============================================================
+   BOOKING CARDS
+   ============================================================ */
+
+.pm-booking-card {
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 14px;
+
+  padding: 20px;
+
+  margin-bottom: 14px;
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+.pm-booking-card:hover {
+
+  border-color: var(--border-accent);
+
+  box-shadow: var(--shadow-md);
+}
+
+
+.pm-booking-id {
+
+  color: var(--primary);
+
+  font-weight: 700;
+}
+
+
+.pm-booking-key {
+
+  color: var(--text-dim);
+
+  font-size: 0.75rem;
+
+  text-transform: uppercase;
+}
+
+
+.pm-booking-value {
+
+  color: var(--text);
+
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+
+.pm-form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+.pm-field {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+
+.pm-label {
+
+  color: var(--text-muted);
+
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+
+.pm-input,
+.pm-select,
+.pm-textarea {
+
+  width: 100%;
+
+  background: var(--input-bg);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 9px;
+
+  padding: 11px 14px;
+
+  font-size: 0.95rem;
+}
+
+
+.pm-input:focus,
+.pm-select:focus,
+.pm-textarea:focus {
+
+  outline: none;
+
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 3px
+    var(--primary-glow);
+}
+
+
+.pm-select option {
+
+  background: var(--card);
+
+  color: var(--text);
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.pm-btn {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 12px 22px;
+
+  border-radius: 9px;
+
+  font-weight: 700;
+
+  border: none;
+}
+
+
+.pm-btn-primary {
+
+  background:
+    linear-gradient(
+      135deg,
+      #00c2ff,
+      #0099cc
+    );
+
+  color: #04131c;
+
+  box-shadow:
+    0 5px 18px
+    rgba(0,194,255,0.25);
+}
+
+
+.pm-btn-primary:hover {
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 7px 24px
+    rgba(0,194,255,0.38);
+}
+
+
+.pm-btn-success {
+
+  background:
+    linear-gradient(
+      135deg,
+      #22c55e,
+      #15803d
+    );
+
+  color: white;
+}
+
+
+.pm-btn-danger {
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #dc2626
+    );
+
+  color: white;
+}
+
+
+.pm-btn-outline {
+
+  background: transparent;
+
+  color: var(--primary);
+
+  border: 1px solid var(--border-accent);
+}
+
+
+.pm-btn-outline:hover {
+
+  background: var(--primary-glow);
+}
+
+
+/* ============================================================
+   AUTH PAGES
+   ============================================================ */
+
+.pm-auth-bg {
+
+  min-height: 100vh;
+
+  background: var(--bg);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 24px;
+}
+
+
+.pm-auth-card {
+
+  width: 100%;
+
+  max-width: 420px;
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 24px;
+
+  padding: 44px 40px;
+
+  box-shadow: var(--shadow-lg);
+}
+
+
+.pm-auth-title {
+
+  color: var(--text);
+
+  font-size: 1.6rem;
+
+  font-weight: 800;
+}
+
+
+.pm-auth-subtitle {
+
+  color: var(--text-muted);
+}
+
+
+.pm-auth-footer {
+
+  color: var(--text-muted);
+
+  text-align: center;
+}
+
+
+/* ============================================================
+   FORM CARD
+   ============================================================ */
+
+.pm-form-card {
+
+  width: 100%;
+
+  max-width: 460px;
+
+  background: var(--card);
+
+  color: var(--text);
+
+  border: 1px solid var(--border);
+
+  border-radius: 24px;
+
+  padding: 40px 36px;
+
+  box-shadow: var(--shadow-lg);
+}
+
+
+/* ============================================================
+   SECTION TITLE
+   ============================================================ */
+
+.pm-section-title {
+
+  color: var(--text);
+
+  font-size: 1.15rem;
+
+  font-weight: 700;
+
+  margin-bottom: 16px;
+
+  padding-bottom: 10px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+
+.pm-section-title-dot {
+
+  width: 8px;
+
+  height: 8px;
+
+  background: var(--primary);
+
+  border-radius: 50%;
+
+  display: inline-block;
+}
+
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.pm-empty {
+
+  text-align: center;
+
+  padding: 48px 24px;
+
+  color: var(--text-muted);
+}
+
+
+.pm-empty-title {
+
+  color: var(--text-dim);
+}
+
+
+/* ============================================================
+   OTP
+   ============================================================ */
+
+.pm-otp-box {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  background: var(--primary-glow);
+
+  border: 1px solid var(--border-accent);
+
+  border-radius: 9px;
+
+  padding: 6px 14px;
+
+  color: var(--primary);
+
+  font-weight: 800;
+
+  letter-spacing: 3px;
+}
+
+
+/* ============================================================
+   RATING
+   ============================================================ */
+
+.pm-stars-row {
+
+  display: flex;
+
+  gap: 6px;
+
+  font-size: 1.6rem;
+}
+
+
+.pm-star {
+
+  color: var(--text-dim);
+
+  cursor: pointer;
+}
+
+
+.pm-star.active {
+
+  color: #fbbf24;
+}
+
+
+/* ============================================================
+   INFO ROW
+   ============================================================ */
+
+.pm-info-row {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid var(--border);
+}
+
+
+.pm-info-key {
+
+  color: var(--text-muted);
+
+  font-size: 0.8rem;
+
+  font-weight: 700;
+
+  width: 140px;
+}
+
+
+.pm-info-val {
+
+  color: var(--text);
+
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   ============================================================
+   IMPORTANT:
+   LIGHT MODE OVERRIDES OLD INLINE DARK STYLES
+   ============================================================
+   ============================================================ */
+
+/*
+   Your current pages use inline styles such as:
+
+   background: "#0f1720"
+   background: "#1f2937"
+   background: "#111827"
+   color: "white"
+
+   The rules below intentionally use !important ONLY
+   for the Light Theme so those old inline dark colors
+   don't prevent Light Mode from working.
+*/
+
+
+/* ---------- PAGE BACKGROUND ---------- */
+
+html[data-theme="light"] #root [style*="background"] {
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+/* Main page backgrounds */
+
+html[data-theme="light"]
+#root
+div[style*="background: rgb(15, 23, 32)"] {
+
+  background: #f4f7fb !important;
+
+  color: #172033 !important;
+}
+
+
+html[data-theme="light"]
+#root
+div[style*="background: rgb(17, 24, 39)"] {
+
+  background: #ffffff !important;
+
+  color: #172033 !important;
+}
+
+
+html[data-theme="light"]
+#root
+div[style*="background: rgb(31, 41, 55)"] {
+
+  background: #ffffff !important;
+
+  color: #172033 !important;
+}
+
+
+/* ---------- TEXT ---------- */
+
+html[data-theme="light"]
+#root
+[style*="color: white"] {
+
+  color: #172033 !important;
+}
+
+
+/* ---------- COMMON DARK TEXT COLORS ---------- */
+
+html[data-theme="light"]
+#root
+[style*="color: rgb(157, 180, 204)"] {
+
+  color: #607086 !important;
+}
+
+
+html[data-theme="light"]
+#root
+[style*="color: rgb(226, 232, 240)"] {
+
+  color: #172033 !important;
+}
+
+
+/* ---------- DARK CARD COLORS ---------- */
+
+html[data-theme="light"]
+#root
+[style*="background: rgb(31, 41, 55)"] h1,
+
+html[data-theme="light"]
+#root
+[style*="background: rgb(31, 41, 55)"] h2,
+
+html[data-theme="light"]
+#root
+[style*="background: rgb(31, 41, 55)"] h3,
+
+html[data-theme="light"]
+#root
+[style*="background: rgb(31, 41, 55)"] p {
+
+  color: #172033 !important;
+}
+
+
+/* ---------- PROFILE / CARD BORDERS ---------- */
+
+html[data-theme="light"]
+#root
+[style*="rgba(0,194,255"] {
+
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+
+/* ============================================================
+   LIGHT MODE — INLINE STYLE FALLBACK
+   ============================================================ */
+
+/*
+   This covers browsers where React serializes inline
+   colors slightly differently.
+*/
+
+
+html[data-theme="light"] {
+
+  --force-light-page: #f4f7fb;
+
+  --force-light-card: #ffffff;
+
+  --force-light-text: #172033;
+
+  --force-light-muted: #607086;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+  .pm-navbar {
+
+    padding: 10px 20px;
+  }
+
+  .pm-navbar-links {
+
+    gap: 3px;
+  }
+
+  .pm-nav-link {
+
+    padding: 7px 9px;
+  }
+}
+
+
+@media (max-width: 768px) {
+
+  .pm-page-center {
+  padding-top: 100px !important;
+}
+
+.pm-form-card {
+  margin-top: 20px !important;
+}
+
+  .pm-page {
+
+    padding: 24px 18px;
+
+    min-height: calc(100vh - 60px);
+  }
+
+
+  .pm-nav {
+
+    height: auto;
+
+    min-height: 60px;
+
+    padding: 10px 16px;
+  }
+
+
+  .pm-nav-links {
+
+    gap: 3px;
+  }
+
+
+  .pm-nav-link {
+
+    display: none;
+  }
+
+
+  .pm-navbar {
+
+    padding: 9px 14px;
+
+    min-height: 60px;
+  }
+
+
+  .pm-navbar-brand-text {
+
+    font-size: 18px;
+  }
+
+
+  .pm-navbar-links {
+
+    gap: 5px;
+  }
+
+
+  .pm-theme-toggle {
+
+    min-height: 36px;
+
+    padding: 7px 10px;
+  }
+
+
+  .pm-theme-text {
+
+    display: none;
+  }
+
+
+  .pm-theme-icon {
+
+    font-size: 1.05rem;
+  }
+
+
+  .pm-profile-card {
+
+    flex-direction: column;
+
+    text-align: center;
+
+    padding: 22px;
+  }
+
+
+  .pm-profile-badge {
+
+    margin-top: 5px;
+  }
+
+
+  .pm-stat-grid {
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+  }
+
+
+  .pm-actions-grid {
+
+    grid-template-columns: 1fr;
+  }
+
+
+  .pm-auth-card {
+
+    padding: 32px 22px;
+  }
+
+
+  .pm-form-card {
+
+    padding: 28px 22px;
+  }
+
+
+  .pm-info-row {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
+  .pm-info-key {
+
+    width: auto;
+  }
+}
+
+
+@media (max-width: 480px) {
+
+  .pm-page {
+
+    padding: 18px 14px;
+  }
+
+
+  .pm-stat-grid {
+
+    grid-template-columns: 1fr;
+  }
+
+
+  .pm-stat-card {
+
+    padding: 18px;
+  }
+
+
+  .pm-navbar-brand-text {
+
+    font-size: 16px;
+  }
+
+
+  .pm-navbar-logo-icon {
+
+    width: 34px;
+
+    height: 34px;
+  }
+
+
+  .pm-auth-card {
+
+    border-radius: 18px;
+
+    padding: 28px 18px;
+  }
+}
+
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
+
+.pm-theme-toggle:focus-visible {
+
+  outline: 3px solid rgba(0,194,255,0.30);
+
+  outline-offset: 2px;
+}
+
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+@keyframes slideUp {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(20px);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity: 0;
+  }
+
+  to {
+
+    opacity: 1;
+  }
+}
+
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+
+@media print {
+
+  .pm-navbar,
+  .pm-nav {
+
+    display: none !important;
+  }
+
+
+  body {
+
+    background: white !important;
+
+    color: black !important;
+  }
+}
+
+/* ================================
+   FORM SELECT - DARK THEME FIX
+================================ */
+
 .pm-select {
-  background: rgba(255,255,255,0.04);
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+
+  background: #0f172a !important;
+  color: #ffffff !important;
+
+  border: 1px solid #334155;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-family: inherit;
+
+  outline: none;
+  cursor: pointer;
+
+  color-scheme: dark;
+}
+
+.pm-select:focus {
+  border-color: #00c2ff;
+  box-shadow: 0 0 0 3px rgba(0, 194, 255, 0.15);
+}
+
+/* Dropdown options */
+.pm-select option {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  padding: 10px;
+}
+
+/* Selected option */
+.pm-select option:checked {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Disabled option */
+.pm-select option:disabled {
+  color: #94a3b8 !important;
+}
+
+/* ================================
+   FORM INPUTS
+================================ */
+
+.pm-input,
+.pm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+
+  background: #0f172a !important;
+  color: #ffffff !important;
+
+  border: 1px solid #334155;
+  border-radius: 10px;
+
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+
+  outline: none;
+}
+
+.pm-input::placeholder,
+.pm-textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+.pm-input:focus,
+.pm-textarea:focus {
+  border-color: #00c2ff;
+  box-shadow: 0 0 0 3px rgba(0, 194, 255, 0.15);
+}
+
+/* ================================
+   FORM LABELS
+================================ */
+
+.pm-label {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #94a3b8 !important;
+
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* ================================
+   FORM FIELD
+================================ */
+
+.pm-field {
+  margin-bottom: 18px;
+}
+
+/* ================================
+   FORM CARD
+================================ */
+
+.pm-form-card {
+  width: 100%;
+  max-width: 430px;
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+
+  border-radius: 18px;
+  padding: 30px;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.pm-form-card-title {
+  margin: 0 0 6px;
+
+  color: #0f172a;
+
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.pm-form-card-subtitle {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ================================
+   FORM
+================================ */
+
+.pm-form {
+  width: 100%;
+}
+
+.pm-form button {
+  font-family: inherit;
+}
+
+/* ================================
+   BUTTON
+================================ */
+
+.pm-btn {
+  min-height: 46px;
+
+  border: none;
+  border-radius: 10px;
+
+  padding: 12px 18px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pm-btn-primary {
+  background: #00b8e6;
+  color: #001018;
+}
+
+.pm-btn-primary:hover {
+  background: #00c2ff;
+  transform: translateY(-1px);
+}
+
+.pm-btn-primary:disabled {
+  background: #8fdff2;
+  color: #64748b;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pm-btn-full {
+  width: 100%;
+}
+
+/* ================================
+   PAGE CENTER
+================================ */
+
+.pm-page-center {
+  min-height: calc(100vh - 80px);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 70px 20px;
+
+  box-sizing: border-box;
+}
+
+/* ================================
+   RATING STARS
+================================ */
+
+.pm-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 5px;
+}
+
+.pm-star {
+  font-size: 30px;
+  color: #94a3b8;
+
+  cursor: pointer;
+
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.pm-star:hover {
+  transform: scale(1.1);
+}
+
+.pm-star.active {
+  color: #fbbf24;
+}
+
+/* ================================
+   TEXTAREA
+================================ */
+
+.pm-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ================================
+   VEHICLE IMAGE PREVIEW
+================================ */
+
+.pm-form-card img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 768px) {
+
+
+  /* ================================
+   CREATE BOOKING - MOBILE
+================================ */
+
+.pm-page-center {
+  padding-top: 100px !important;
+}
+
+.pm-page-center .leaflet-container {
+  width: 100% !important;
+  height: 420px !important;
+  border-radius: 14px;
+}
+
+.pm-page-center .leaflet-control-container {
+  z-index: 400;
+}
+
+/* Booking map card */
+.pm-page-center .booking-map,
+.pm-page-center .map-section {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Booking details below map */
+.pm-page-center .booking-details,
+.pm-page-center .details-section {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Nearby cards */
+.pm-page-center .nearby-card {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.pm-page-center button {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+  .pm-page-center {
+    padding: 35px 16px;
+  }
+
+  .pm-form-card {
+    max-width: 100%;
+    padding: 24px;
+  }
+
+  .pm-form-card-title {
+    font-size: 22px;
+  }
+
+  .pm-input,
+  .pm-select,
+  .pm-textarea {
+    font-size: 14px;
+  }
+}
+/* =========================================================
+   CREATE BOOKING / FORM VISIBILITY FIX
+   ========================================================= */
+
+/* Select box */
+.pm-select {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px;
+
+  padding: 12px 14px;
+
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 500;
+
+  outline: none;
+  opacity: 1 !important;
+
+  color-scheme: light;
+}
+
+/* Select when focused */
+.pm-select:focus {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+
+  border-color: #00b8e6 !important;
+
+  box-shadow: 0 0 0 3px rgba(0, 184, 230, 0.15);
+}
+
+/* Dropdown options */
+.pm-select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Selected option */
+.pm-select option:checked {
+  background-color: #e0f7ff !important;
+  color: #0f172a !important;
+}
+
+/* Placeholder option */
+.pm-select option[value=""] {
+  color: #64748b !important;
+}
+
+
+/* =========================================================
+   INPUT FIELDS
+   ========================================================= */
+
+.pm-input,
+.pm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px;
+
+  padding: 12px 14px;
+
+  font-size: 14px;
+  font-family: inherit;
+
+  outline: none;
+
+  opacity: 1 !important;
+}
+
+.pm-input::placeholder,
+.pm-textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+.pm-input:focus,
+.pm-textarea:focus {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+
+  border-color: #00b8e6 !important;
+
+  box-shadow: 0 0 0 3px rgba(0, 184, 230, 0.15);
+}
+
+
+/* =========================================================
+   FORM LABELS
+   ========================================================= */
+
+.pm-label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #475569 !important;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+
+/* =========================================================
+   FORM FIELDS
+   ========================================================= */
+
+.pm-field {
+  margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.pm-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.pm-btn-primary {
+  background: #00b8e6 !important;
+  color: #001018 !important;
+  border: none;
+}
+
+.pm-btn-primary:hover {
+  background: #00a8d4 !important;
+}
+
+.pm-btn-primary:disabled {
+  background: #b6eaf5 !important;
+  color: #64748b !important;
+}
+
+
+/* =========================================================
+   RATING STARS
+   ========================================================= */
+
+.pm-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pm-star {
+  color: #94a3b8;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.pm-star.active {
+  color: #fbbf24;
+}
+/* ── Select Dropdown ─────────────────────────────────────── */
+
+.pm-select {
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
@@ -320,574 +2341,1071 @@ input, textarea, select {
   transition: all var(--transition);
   cursor: pointer;
   appearance: none;
+
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238ba3be' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+
   background-repeat: no-repeat;
   background-position: right 14px center;
   padding-right: 36px;
 }
+
 .pm-select:focus {
   outline: none;
   border-color: var(--primary);
   background-color: var(--primary-glow-sm);
-  box-shadow: 0 0 0 3px rgba(0,194,255,0.12);
+  box-shadow: 0 0 0 3px rgba(0, 194, 255, 0.12);
 }
+
+/* Dark Mode */
 .pm-select option {
   background: #1f2937;
-  color: var(--text);
+  color: #ffffff;
 }
 
-.pm-textarea {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-size: 0.95rem;
-  padding: 11px 14px;
-  width: 100%;
-  resize: vertical;
-  transition: all var(--transition);
-}
-.pm-textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: var(--primary-glow-sm);
-  box-shadow: 0 0 0 3px rgba(0,194,255,0.12);
-}
-.pm-textarea::placeholder { color: var(--text-dim); }
-
-/* ── Buttons ─────────────────────────────────────────────── */
-.pm-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  padding: 12px 22px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition);
-  cursor: pointer;
-  border: none;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
+/* Light Mode */
+body.light-theme .pm-select {
+  background: #ffffff;
+  color: #111827;
+  border-color: #d1d5db;
 }
 
-.pm-btn-primary {
-  background: linear-gradient(135deg, #00c2ff 0%, #0099cc 100%);
-  color: #05101a;
-  box-shadow: 0 4px 16px rgba(0,194,255,0.3);
-}
-.pm-btn-primary:hover {
-  background: linear-gradient(135deg, #26ceff 0%, #00b8f5 100%);
-  box-shadow: 0 6px 24px rgba(0,194,255,0.45);
-  transform: translateY(-1px);
-}
-.pm-btn-primary:active { transform: translateY(0); }
-
-.pm-btn-success {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(34,197,94,0.25);
-}
-.pm-btn-success:hover {
-  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(34,197,94,0.35);
+body.light-theme .pm-select option {
+  background: #ffffff;
+  color: #111827;
 }
 
-.pm-btn-danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(239,68,68,0.25);
-}
-.pm-btn-danger:hover {
-  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(239,68,68,0.35);
+/* Light Mode - selected value */
+body.light-theme .pm-select:focus {
+  background-color: #ffffff;
+  color: #111827;
 }
 
-.pm-btn-outline {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--border-accent);
-}
-.pm-btn-outline:hover {
-  background: var(--primary-glow);
-  transform: translateY(-1px);
+/* Dark Mode - selected value */
+body.dark-theme .pm-select {
+  background: #111827;
+  color: #ffffff;
 }
 
-.pm-btn-sm {
-  font-size: 0.82rem;
-  padding: 8px 14px;
-  border-radius: 7px;
+body.dark-theme .pm-select option {
+  background: #1f2937;
+  color: #ffffff;
 }
-.pm-btn-full { width: 100%; }
 
-.pm-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none !important;
+/* ============================================================
+   PARKMATE PLUS — FINAL LIGHT THEME FORM FIX
+   IMPORTANT: KEEP THIS AT THE VERY END OF THE CSS FILE
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   LIGHT THEME — FORM FIELDS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-input,
+html[data-theme="light"] .pm-select,
+html[data-theme="light"] .pm-textarea,
+[data-theme="light"] .pm-input,
+[data-theme="light"] .pm-select,
+[data-theme="light"] .pm-textarea {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  color: #172033 !important;
+
+  border: 1px solid #cbd5e1 !important;
+
   box-shadow: none !important;
 }
 
-/* ── Auth Footer ─────────────────────────────────────────── */
-.pm-auth-footer {
-  text-align: center;
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  margin-top: 8px;
-}
-.pm-auth-footer a {
-  color: var(--primary);
-  font-weight: 600;
+/* ------------------------------------------------------------
+   INPUT PLACEHOLDER
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-input::placeholder,
+html[data-theme="light"] .pm-textarea::placeholder,
+[data-theme="light"] .pm-input::placeholder,
+[data-theme="light"] .pm-textarea::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
 }
 
-/* ── Divider ─────────────────────────────────────────────── */
-.pm-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 8px 0;
+/* ------------------------------------------------------------
+   SELECT OPTIONS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-select option,
+[data-theme="light"] .pm-select option {
+  background: #ffffff !important;
+  color: #172033 !important;
 }
 
-/* ══════════════════════════════════════════════════════════
-   PAGE LAYOUT
-   ══════════════════════════════════════════════════════════ */
-.pm-page {
-  min-height: calc(100vh - 64px);
+/* ------------------------------------------------------------
+   SELECTED OPTION
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-select option:checked,
+[data-theme="light"] .pm-select option:checked {
+  background: #e8f6fc !important;
+  color: #172033 !important;
+}
+
+/* ------------------------------------------------------------
+   INPUT / SELECT FOCUS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-input:focus,
+html[data-theme="light"] .pm-select:focus,
+html[data-theme="light"] .pm-textarea:focus,
+[data-theme="light"] .pm-input:focus,
+[data-theme="light"] .pm-select:focus,
+[data-theme="light"] .pm-textarea:focus {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  color: #172033 !important;
+
+  border-color: #008fc4 !important;
+
+  box-shadow: 0 0 0 3px rgba(0, 143, 196, 0.12) !important;
+
+  outline: none !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — FORM CARD
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-form-card,
+[data-theme="light"] .pm-form-card {
+  background: #ffffff !important;
+  color: #172033 !important;
+
+  border: 1px solid rgba(0, 143, 196, 0.20) !important;
+
+  box-shadow:
+    0 8px 30px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — CARD TEXT
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-form-card-title,
+[data-theme="light"] .pm-form-card-title {
+  color: #172033 !important;
+}
+
+html[data-theme="light"] .pm-form-card-subtitle,
+[data-theme="light"] .pm-form-card-subtitle {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .pm-label,
+[data-theme="light"] .pm-label {
+  color: #475569 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — BOOKING PAGE COMMON TEXT
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3 {
+  color: #172033;
+}
+
+html[data-theme="light"] p,
+[data-theme="light"] p {
+  color: #475569;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — BUTTON
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-btn-primary,
+[data-theme="light"] .pm-btn-primary {
+  background: linear-gradient(
+    135deg,
+    #00b8ee 0%,
+    #008fc4 100%
+  ) !important;
+
+  color: #ffffff !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — DISABLED BUTTON
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-btn:disabled,
+[data-theme="light"] .pm-btn:disabled {
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — TEXTAREA
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] textarea,
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+[data-theme="light"] textarea,
+[data-theme="light"] input,
+[data-theme="light"] select {
+  color-scheme: light !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — SELECT ARROW
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-select,
+[data-theme="light"] .pm-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 8L1 3h10z'/%3E%3C/svg%3E") !important;
+
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 12px 12px !important;
+
+  padding-right: 36px !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — READONLY INPUT
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-input[readonly],
+[data-theme="light"] .pm-input[readonly] {
+  background: #f8fafc !important;
+  color: #475569 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME — NEARBY PARKING / ASSISTANT CARDS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-card,
+html[data-theme="light"] .pm-booking-card,
+html[data-theme="light"] .pm-action-card,
+[data-theme="light"] .pm-card,
+[data-theme="light"] .pm-booking-card,
+[data-theme="light"] .pm-action-card {
+  background: #ffffff !important;
+  color: #172033 !important;
+
+  border-color: rgba(15, 23, 42, 0.14) !important;
+}
+
+/* ------------------------------------------------------------
+   FINAL OVERRIDE FOR BROWSER AUTOFILL
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] input:-webkit-autofill,
+html[data-theme="light"] input:-webkit-autofill:hover,
+html[data-theme="light"] input:-webkit-autofill:focus,
+[data-theme="light"] input:-webkit-autofill,
+[data-theme="light"] input:-webkit-autofill:hover,
+[data-theme="light"] input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #172033 !important;
+
+  -webkit-box-shadow:
+    0 0 0 1000px #ffffff inset !important;
+
+  box-shadow:
+    0 0 0 1000px #ffffff inset !important;
+
+  background-color: #ffffff !important;
+}
+
+/* ============================================================
+   PARKMATE PLUS - FINAL LIGHT THEME FORM FIX
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   LIGHT THEME - ALL FORM CONTROLS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-input,
+html[data-theme="light"] .pm-select,
+html[data-theme="light"] .pm-textarea {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  color: #172033 !important;
+
+  border: 1px solid #cbd5e1 !important;
+  border-color: #cbd5e1 !important;
+
+  box-shadow: none !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - INPUT PLACEHOLDER
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-input::placeholder,
+html[data-theme="light"] .pm-textarea::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - SELECT
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-select {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  color: #172033 !important;
+
+  border: 1px solid #cbd5e1 !important;
+
+  -webkit-text-fill-color: #172033 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - SELECT OPTIONS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-select option {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  color: #172033 !important;
+
+  -webkit-text-fill-color: #172033 !important;
+}
+
+/* Selected option */
+html[data-theme="light"] .pm-select option:checked {
+  background: #ffffff !important;
+  color: #172033 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - SELECT FOCUS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-select:focus {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  color: #172033 !important;
+
+  border-color: #0077a8 !important;
+
+  box-shadow: 0 0 0 3px rgba(0, 119, 168, 0.12) !important;
+
+  outline: none !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - PARKING LOCATION INPUT
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] input.pm-input,
+html[data-theme="light"] input.pm-input[type="text"] {
+  background: #ffffff !important;
+  color: #172033 !important;
+
+  -webkit-text-fill-color: #172033 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - TEXTAREA
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] textarea.pm-textarea {
+  background: #ffffff !important;
+  color: #172033 !important;
+
+  -webkit-text-fill-color: #172033 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - FORM LABELS
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-label {
+  color: #334155 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - FORM CARD
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-form-card {
+  background: #ffffff !important;
+  color: #172033 !important;
+
+  border-color: #dbe4ee !important;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - FORM TITLE
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-form-card-title {
+  color: #172033 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - FORM SUBTITLE
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-form-card-subtitle {
+  color: #607086 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - DARK BODY CLASS OVERRIDE
+   ------------------------------------------------------------ */
+
+/*
+   Your current CSS has both:
+   html[data-theme="light"]
+   AND
+   body.dark-theme
+
+   These rules make LIGHT THEME win.
+*/
+
+html[data-theme="light"] body.dark-theme .pm-input,
+html[data-theme="light"] body.dark-theme .pm-select,
+html[data-theme="light"] body.dark-theme .pm-textarea {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  color: #172033 !important;
+
+  border-color: #cbd5e1 !important;
+
+  -webkit-text-fill-color: #172033 !important;
+}
+
+html[data-theme="light"] body.dark-theme .pm-select option {
+  background: #ffffff !important;
+  color: #172033 !important;
+}
+
+/* ------------------------------------------------------------
+   LIGHT THEME - CREATE BOOKING TEXT
+   ------------------------------------------------------------ */
+
+html[data-theme="light"] .pm-page,
+html[data-theme="light"] .pm-page * {
+  color: inherit;
+}
+
+/* Keep button text correct */
+html[data-theme="light"] .pm-btn-primary {
+  color: #001018 !important;
+}
+/* ============================================================
+   PARKMATE PLUS — FINAL DARK THEME FORM FIX
+   Fixes Add Vehicle + Rating pages
+   ============================================================ */
+
+html[data-theme="dark"] .pm-page-center {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+html[data-theme="dark"] .pm-form-card {
+  background: var(--card) !important;
+  color: var(--text) !important;
+
+  border: 1px solid var(--border-accent) !important;
+
+  box-shadow: var(--shadow-lg), var(--shadow-glow) !important;
+}
+
+html[data-theme="dark"] .pm-form-card-title {
+  color: var(--text) !important;
+}
+
+html[data-theme="dark"] .pm-form-card-subtitle {
+  color: var(--text-muted) !important;
+}
+
+
+/* =========================
+   FORM LABELS
+   ========================= */
+
+html[data-theme="dark"] .pm-label {
+  color: var(--text-muted) !important;
+}
+
+
+/* =========================
+   INPUTS
+   ========================= */
+
+html[data-theme="dark"] .pm-input,
+html[data-theme="dark"] .pm-textarea {
+  background: var(--input-bg) !important;
+
+  color: var(--text) !important;
+
+  border: 1px solid var(--border) !important;
+
+  -webkit-text-fill-color: var(--text) !important;
+}
+
+html[data-theme="dark"] .pm-input::placeholder,
+html[data-theme="dark"] .pm-textarea::placeholder {
+  color: var(--text-muted) !important;
+
+  opacity: 1 !important;
+}
+
+
+/* =========================
+   INPUT FOCUS
+   ========================= */
+
+html[data-theme="dark"] .pm-input:focus,
+html[data-theme="dark"] .pm-textarea:focus {
+  background: var(--input-bg) !important;
+
+  color: var(--text) !important;
+
+  border-color: var(--primary) !important;
+
+  box-shadow:
+    0 0 0 3px var(--primary-glow) !important;
+
+  outline: none !important;
+}
+
+
+/* =========================
+   SELECT
+   ========================= */
+
+html[data-theme="dark"] .pm-select {
+  background: var(--input-bg) !important;
+
+  color: var(--text) !important;
+
+  border: 1px solid var(--border) !important;
+
+  -webkit-text-fill-color: var(--text) !important;
+
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] .pm-select:focus {
+  background: var(--input-bg) !important;
+
+  color: var(--text) !important;
+
+  border-color: var(--primary) !important;
+
+  box-shadow:
+    0 0 0 3px var(--primary-glow) !important;
+
+  outline: none !important;
+}
+
+
+/* =========================
+   SELECT OPTIONS
+   ========================= */
+
+html[data-theme="dark"] .pm-select option {
+  background: #182334 !important;
+
+  color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .pm-select option:checked {
+  background: #213047 !important;
+
+  color: #ffffff !important;
+}
+
+
+/* =========================
+   RATING STARS
+   ========================= */
+
+html[data-theme="dark"] .pm-star {
+  color: var(--text-dim) !important;
+}
+
+html[data-theme="dark"] .pm-star.active {
+  color: #fbbf24 !important;
+}
+
+
+/* =========================
+   RATING PAGE TEXT
+   ========================= */
+
+html[data-theme="dark"] .pm-form-card h1,
+html[data-theme="dark"] .pm-form-card h2,
+html[data-theme="dark"] .pm-form-card h3 {
+  color: var(--text) !important;
+}
+
+html[data-theme="dark"] .pm-form-card p {
+  color: var(--text-muted) !important;
+}
+
+
+/* =========================
+   BUTTON
+   ========================= */
+
+html[data-theme="dark"] .pm-btn-primary {
+  background: var(--primary) !important;
+
+  color: #001018 !important;
+}
+
+html[data-theme="dark"] .pm-btn-primary:hover {
+  background: #00c2ff !important;
+
+  color: #001018 !important;
+}
+
+/* =========================================
+   PARKMATE PLUS LANDING PAGE
+========================================= */
+
+.landing-page {
+  min-height: 100vh;
   background: var(--bg);
-  padding: 36px 40px;
-}
-
-.pm-page-center {
-  min-height: calc(100vh - 64px);
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 24px;
-  position: relative;
-  overflow: hidden;
-}
-.pm-page-center::before {
-  content: '';
-  position: absolute;
-  top: -200px;
-  right: -200px;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(0,194,255,0.08) 0%, transparent 65%);
-  pointer-events: none;
-}
-
-/* ── Page Header ─────────────────────────────────────────── */
-.pm-page-header {
-  margin-bottom: 32px;
-}
-.pm-page-title {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -0.5px;
-}
-.pm-page-subtitle {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-top: 4px;
-}
-.pm-page-title span { color: var(--primary); }
-
-/* ══════════════════════════════════════════════════════════
-   CARDS
-   ══════════════════════════════════════════════════════════ */
-.pm-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition);
-}
-.pm-card:hover {
-  border-color: rgba(0,194,255,0.18);
-  box-shadow: var(--shadow-md);
-}
-
-.pm-card-sm {
-  padding: 18px 20px;
-  border-radius: var(--radius-md);
-}
-
-/* Profile info card */
-.pm-profile-card {
-  background: linear-gradient(135deg, #1f2937 0%, #1a2535 100%);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-lg);
-  padding: 24px 28px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 32px;
-  box-shadow: var(--shadow-md), 0 0 30px rgba(0,194,255,0.06);
-  animation: slideUp 0.35s ease;
-}
-.pm-profile-avatar {
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, var(--primary), #005f80);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0a1a24;
-  flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0,194,255,0.3);
-}
-.pm-profile-info { flex: 1; }
-.pm-profile-name {
-  font-size: 1.2rem;
-  font-weight: 700;
   color: var(--text);
 }
-.pm-profile-meta {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-.pm-profile-badge {
-  background: var(--primary-glow);
-  border: 1px solid var(--border-accent);
-  color: var(--primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 99px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
 
-/* ── Stat Card (admin) ───────────────────────────────────── */
-.pm-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-  margin-bottom: 36px;
-}
-.pm-stat-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 22px 20px;
-  transition: all var(--transition);
-  position: relative;
-  overflow: hidden;
-  animation: slideUp 0.35s ease;
-}
-.pm-stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--primary), transparent);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-}
-.pm-stat-card:hover {
-  border-color: var(--border-accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md), var(--shadow-glow);
-}
-.pm-stat-icon {
-  font-size: 1.4rem;
-  margin-bottom: 10px;
-}
-.pm-stat-value {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--primary);
-  line-height: 1;
-}
-.pm-stat-label {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
 
-/* ── Dashboard Quick-Action Cards ────────────────────────── */
-.pm-actions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 8px;
-}
-.pm-action-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 26px 22px;
-  text-decoration: none;
-  color: var(--text);
-  transition: all var(--transition);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  position: relative;
-  overflow: hidden;
-  animation: slideUp 0.4s ease;
-}
-.pm-action-card::after {
-  content: '→';
-  position: absolute;
-  right: 18px;
-  bottom: 20px;
-  font-size: 1.1rem;
-  color: var(--primary);
-  opacity: 0;
-  transition: all var(--transition);
-  transform: translateX(-6px);
-}
-.pm-action-card:hover {
-  background: var(--card-hover);
-  border-color: var(--border-accent);
-  box-shadow: var(--shadow-md), var(--shadow-glow);
-  transform: translateY(-3px);
-  color: var(--text);
-}
-.pm-action-card:hover::after {
-  opacity: 1;
-  transform: translateX(0);
-}
-.pm-action-icon {
-  font-size: 1.8rem;
-  line-height: 1;
-}
-.pm-action-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-}
-.pm-action-desc {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-}
+/* Header */
 
-/* ── Booking/Listing Card ────────────────────────────────── */
-.pm-booking-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 20px 22px;
-  margin-bottom: 14px;
-  transition: all var(--transition);
-  animation: slideUp 0.35s ease;
-}
-.pm-booking-card:hover {
-  border-color: rgba(0,194,255,0.2);
-  box-shadow: var(--shadow-md);
-}
-.pm-booking-header {
+.landing-header {
+  height: 76px;
+  padding: 0 6%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.pm-booking-id {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--primary);
-}
-.pm-booking-body {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.pm-booking-field { }
-.pm-booking-key {
-  font-size: 0.75rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-}
-.pm-booking-value {
-  font-size: 0.9rem;
-  color: var(--text);
-  font-weight: 500;
-  margin-top: 2px;
-}
-.pm-booking-actions {
+
+.landing-brand {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.landing-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.landing-login-btn {
+  padding: 11px 24px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.landing-login-btn:hover {
+  background: var(--input-bg);
+}
+
+
+/* Main */
+
+.landing-main {
+  width: 100%;
+}
+
+
+/* Hero */
+
+.landing-hero {
+  max-width: 1200px;
+  margin: auto;
+  padding: 90px 6% 70px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 70px;
+  align-items: center;
+}
+
+.landing-content {
+  max-width: 650px;
+}
+
+.landing-badge {
+  display: inline-block;
+  padding: 9px 16px;
+  margin-bottom: 24px;
+  border-radius: 30px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.landing-content h1 {
+  margin: 0;
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 1.05;
+  font-weight: 850;
+  letter-spacing: -2px;
+}
+
+.landing-content h1 span {
+  color: #08a9df;
+}
+
+.landing-content p {
+  max-width: 620px;
+  margin: 28px 0;
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+
+/* Buttons */
+
+.landing-actions {
+  display: flex;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
-/* ── Status Badge ────────────────────────────────────────── */
-.pm-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 99px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.pm-badge-pending {
-  background: rgba(245,158,11,0.12);
-  color: #fbbf24;
-  border: 1px solid rgba(245,158,11,0.25);
-}
-.pm-badge-active {
-  background: rgba(34,197,94,0.12);
-  color: #4ade80;
-  border: 1px solid rgba(34,197,94,0.25);
-}
-.pm-badge-completed {
-  background: rgba(0,194,255,0.12);
-  color: var(--primary);
-  border: 1px solid var(--border-accent);
-}
-.pm-badge-danger {
-  background: rgba(239,68,68,0.12);
-  color: #fc8181;
-  border: 1px solid rgba(239,68,68,0.25);
-}
-
-/* ── OTP Display ─────────────────────────────────────────── */
-.pm-otp-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--primary-glow);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-sm);
-  padding: 5px 14px;
-  font-size: 1rem;
+.landing-primary-btn,
+.landing-secondary-btn {
+  padding: 14px 25px;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: 800;
-  color: var(--primary);
-  letter-spacing: 3px;
-  font-variant-numeric: tabular-nums;
-}
-.pm-otp-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-dim);
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* ── Section Header ──────────────────────────────────────── */
-.pm-section-title {
-  font-size: 1.15rem;
-  font-weight: 700;
+.landing-primary-btn {
+  border: none;
+  background: #08b8ed;
+  color: #001018;
+  box-shadow: 0 8px 24px rgba(8, 184, 237, 0.25);
+}
+
+.landing-primary-btn:hover {
+  transform: translateY(-2px);
+}
+
+.landing-secondary-btn {
+  border: 1px solid var(--border);
+  background: transparent;
   color: var(--text);
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
+}
+
+.landing-secondary-btn:hover {
+  background: var(--input-bg);
+}
+
+
+/* Logo card */
+
+.landing-visual {
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.pm-section-title-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--primary);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--primary);
+  justify-content: center;
 }
 
-/* ── Empty State ─────────────────────────────────────────── */
-.pm-empty {
-  text-align: center;
-  padding: 48px 24px;
-  color: var(--text-muted);
-}
-.pm-empty-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
-  opacity: 0.5;
-}
-.pm-empty-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-dim);
-}
-
-/* ── Form Card (for center pages) ───────────────────────── */
-.pm-form-card {
+.landing-logo-card {
   width: 100%;
-  max-width: 460px;
+  max-width: 400px;
+  padding: 45px 35px;
+  text-align: center;
+  border-radius: 28px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 40px 36px;
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
-  position: relative;
-  z-index: 1;
-  animation: slideUp 0.4s ease;
+  box-shadow: var(--shadow-sm);
 }
-.pm-form-card-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
+
+.landing-main-logo {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 20px;
 }
-.pm-form-card-subtitle {
-  font-size: 0.88rem;
+
+.landing-logo-card h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.landing-logo-card p {
+  margin: 10px 0 28px;
   color: var(--text-muted);
-  margin-bottom: 28px;
+  font-size: 16px;
 }
 
-/* ── Rating Stars ────────────────────────────────────────── */
-.pm-stars-row {
+
+/* Mini features */
+
+.landing-mini-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.landing-mini-features div {
+  padding: 14px 10px;
+  border-radius: 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
   display: flex;
-  gap: 6px;
-  font-size: 1.6rem;
-  cursor: pointer;
-  user-select: none;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 20px;
 }
-.pm-star { color: var(--text-dim); transition: color var(--transition), transform 0.15s; }
-.pm-star.active { color: #fbbf24; }
-.pm-star:hover { transform: scale(1.15); }
 
-/* ── Info Row ────────────────────────────────────────────── */
-.pm-info-row {
+.landing-mini-features span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+
+/* Feature section */
+
+.landing-features {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px 6% 80px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.landing-feature-card {
+  padding: 28px 24px;
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.feature-icon {
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.landing-feature-card h3 {
+  margin: 0 0 10px;
+  font-size: 19px;
+}
+
+.landing-feature-card p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+
+/* CTA */
+
+.landing-cta {
+  max-width: 1100px;
+  margin: 0 auto 70px;
+  padding: 55px 30px;
+  text-align: center;
+  border-radius: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.landing-cta h2 {
+  margin: 0 0 12px;
+  font-size: 34px;
+}
+
+.landing-cta p {
+  margin-bottom: 25px;
+  color: var(--text-muted);
+}
+
+
+/* Footer */
+
+.landing-footer {
+  padding: 30px 6%;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--text-muted);
+}
+
+.landing-footer-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.9rem;
-}
-.pm-info-row:last-child { border-bottom: none; }
-.pm-info-key {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  width: 140px;
-  flex-shrink: 0;
-}
-.pm-info-val {
+  font-weight: 800;
   color: var(--text);
-  font-weight: 500;
 }
 
-/* ── Responsive ──────────────────────────────────────────── */
+.landing-footer-brand img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.landing-footer p {
+  margin: 0;
+  font-size: 13px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 768px) {
-  .pm-page { padding: 24px 20px; }
-  .pm-nav { padding: 0 16px; }
-  .pm-nav-link { display: none; }
-  .pm-stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .pm-auth-card { padding: 32px 24px; }
-  .pm-form-card { padding: 28px 22px; }
-  .pm-profile-card { flex-direction: column; text-align: center; }
+
+  .landing-header {
+    height: 68px;
+    padding: 0 20px;
+  }
+
+  .landing-brand {
+    font-size: 18px;
+  }
+
+  .landing-logo {
+    width: 38px;
+    height: 38px;
+  }
+
+  .landing-login-btn {
+    padding: 9px 15px;
+    font-size: 13px;
+  }
+
+  .landing-hero {
+    padding: 55px 24px 45px;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .landing-content {
+    max-width: 100%;
+  }
+
+  .landing-content h1 {
+    font-size: 48px;
+    letter-spacing: -1px;
+  }
+
+  .landing-content p {
+    font-size: 16px;
+  }
+
+  .landing-actions {
+    justify-content: center;
+  }
+
+  .landing-primary-btn,
+  .landing-secondary-btn {
+    width: 100%;
+  }
+
+  .landing-logo-card {
+    max-width: 360px;
+  }
+
+  .landing-features {
+    padding: 10px 24px 55px;
+    grid-template-columns: 1fr;
+  }
+
+  .landing-cta {
+    margin: 0 20px 50px;
+    padding: 40px 20px;
+  }
+
+  .landing-cta h2 {
+    font-size: 27px;
+  }
+
+  .landing-footer {
+    padding: 25px 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.auth-logo-image {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 12px;
+}
+/* ============================================================
+   PARKMATE PLUS LOGO — AUTH PAGES
+   ============================================================ */
+
+.pm-auth-logo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pm-auth-logo img {
+  width: 72px !important;
+  height: 72px !important;
+
+  max-width: 72px !important;
+  max-height: 72px !important;
+
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  object-fit: contain !important;
+  display: block !important;
+
+  margin: 0 auto;
+}
+
+/* Smaller on mobile */
+@media (max-width: 600px) {
+  .pm-auth-logo img {
+    width: 58px !important;
+    height: 58px !important;
+    max-width: 58px !important;
+    max-height: 58px !important;
+  }
 }
