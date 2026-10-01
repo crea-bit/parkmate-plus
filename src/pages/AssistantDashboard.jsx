@@ -330,7 +330,7 @@ const AssistantDashboard = () => {
               <div className="assistant-card-grid">
                 {requests.map((booking) => (
                   <div
-                    key={booking.id}
+                    key={booking.bookingId}
                     className="assistant-booking-card"
                     style={styles.bookingCard}
                   >
@@ -341,7 +341,7 @@ const AssistantDashboard = () => {
                       style={styles.cardTop}
                     >
                       <h3 style={styles.bookingTitle}>
-                        Booking #{booking.id}
+                        Booking #{booking.bookingId}
                       </h3>
 
                       <span
@@ -424,13 +424,13 @@ const AssistantDashboard = () => {
                     {/* ACCEPT */}
 
                     <button
-                      style={styles.primaryButton}
-                      onClick={() =>
-                        acceptBooking(booking.id)
-                      }
-                    >
-                      ✓ Accept Booking
-                    </button>
+  style={styles.primaryButton}
+  onClick={() =>
+    acceptBooking(booking.bookingId)
+  }
+>
+  ✓ Accept Booking
+</button>
                   </div>
                 ))}
               </div>
@@ -470,7 +470,7 @@ const AssistantDashboard = () => {
               <div className="assistant-card-grid">
                 {myBookings.map((booking) => (
                   <div
-                    key={booking.id}
+                    key={booking.bookingId}
                     className="assistant-booking-card"
                     style={styles.bookingCard}
                   >
@@ -484,7 +484,7 @@ const AssistantDashboard = () => {
                         className="assistant-booking-heading"
                       >
                         <h3 style={styles.bookingTitle}>
-                          Booking #{booking.id}
+                          Booking #{booking.bookingId}
                         </h3>
 
                         <p style={styles.smallText}>
@@ -588,7 +588,7 @@ const AssistantDashboard = () => {
                         style={styles.primaryButton}
                         onClick={() =>
                           updateStatus(
-                            booking.id,
+                            booking.bookingId,
                             "RETURNING"
                           )
                         }
@@ -612,7 +612,7 @@ const AssistantDashboard = () => {
                             style={styles.outlineButton}
                             onClick={() =>
                               updateStatus(
-                                booking.id,
+                                booking.bookingId,
                                 "PICKED_UP"
                               )
                             }
@@ -624,7 +624,7 @@ const AssistantDashboard = () => {
                             style={styles.outlineButton}
                             onClick={() =>
                               updateStatus(
-                                booking.id,
+                                booking.bookingId,
                                 "PARKED"
                               )
                             }
@@ -636,7 +636,7 @@ const AssistantDashboard = () => {
                             style={styles.outlineButton}
                             onClick={() =>
                               updateStatus(
-                                booking.id,
+                                booking.bookingId,
                                 "RETURNING"
                               )
                             }
@@ -648,7 +648,7 @@ const AssistantDashboard = () => {
                             style={styles.successButton}
                             onClick={() =>
                               updateStatus(
-                                booking.id,
+                                booking.bookingId,
                                 "COMPLETED"
                               )
                             }
@@ -672,7 +672,7 @@ const AssistantDashboard = () => {
                         }}
                         onClick={() =>
                           updateStatus(
-                            booking.id,
+                            booking.bookingId,
                             "COMPLETED"
                           )
                         }
