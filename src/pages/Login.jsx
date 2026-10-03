@@ -21,9 +21,9 @@ const Login = () => {
 
       let response;
 
-      // =========================
+      // =====================================================
       // USER LOGIN
-      // =========================
+      // =====================================================
       if (role === "USER") {
         response = await api.post("/users/login", {
           email,
@@ -62,9 +62,9 @@ const Login = () => {
         navigate("/dashboard/user");
       }
 
-      // =========================
+      // =====================================================
       // ASSISTANT LOGIN
-      // =========================
+      // =====================================================
       else if (role === "ASSISTANT") {
         response = await api.post("/assistants/login", {
           email,
@@ -107,9 +107,9 @@ const Login = () => {
         navigate("/dashboard/assistant");
       }
 
-      // =========================
+      // =====================================================
       // ADMIN LOGIN
-      // =========================
+      // =====================================================
       else if (role === "ADMIN") {
         response = await api.post("/users/login", {
           email,
@@ -134,7 +134,7 @@ const Login = () => {
         }
 
         // IMPORTANT:
-        // Account must actually have ADMIN role
+        // The account must actually have ADMIN role
         if (response.data.user.role !== "ADMIN") {
           alert(
             "Access denied: This account is not an Admin."
@@ -160,14 +160,13 @@ const Login = () => {
 
         navigate("/dashboard/admin");
       }
-
     } catch (error) {
       console.log("Login error:", error);
 
       if (error.response?.status === 401) {
         alert(
           error.response?.data?.message ||
-          "Invalid email or password."
+            "Invalid email or password."
         );
       } else if (error.response?.status === 403) {
         alert(
@@ -183,11 +182,12 @@ const Login = () => {
     <div className="pm-auth-bg">
       <div className="pm-auth-card">
 
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
         <div className="pm-auth-header">
 
-          {/* =========================
-              LOGO
-          ========================= */}
+          {/* LOGO */}
           <div className="pm-auth-logo">
             <img
               src={logo}
@@ -195,9 +195,7 @@ const Login = () => {
             />
           </div>
 
-          {/* =========================
-              BRAND NAME
-          ========================= */}
+          {/* BRAND NAME */}
           <div className="pm-auth-brand-name">
             Park<span>Mate</span> Plus
           </div>
@@ -212,14 +210,17 @@ const Login = () => {
 
         </div>
 
+        {/* =====================================================
+            LOGIN FORM
+        ===================================================== */}
         <form
           className="pm-form"
           onSubmit={handleLogin}
         >
 
-          {/* =========================
+          {/* =================================================
               ROLE
-          ========================= */}
+          ================================================= */}
           <div className="pm-field">
 
             <label className="pm-label">
@@ -254,9 +255,9 @@ const Login = () => {
 
           </div>
 
-          {/* =========================
+          {/* =================================================
               EMAIL
-          ========================= */}
+          ================================================= */}
           <div className="pm-field">
 
             <label className="pm-label">
@@ -276,9 +277,9 @@ const Login = () => {
 
           </div>
 
-          {/* =========================
+          {/* =================================================
               PASSWORD
-          ========================= */}
+          ================================================= */}
           <div className="pm-field">
 
             <label className="pm-label">
@@ -298,9 +299,9 @@ const Login = () => {
 
           </div>
 
-          {/* =========================
+          {/* =================================================
               LOGIN BUTTON
-          ========================= */}
+          ================================================= */}
           <div style={{ marginTop: "8px" }}>
 
             <button
@@ -314,9 +315,9 @@ const Login = () => {
 
           <div className="pm-divider" />
 
-          {/* =========================
+          {/* =================================================
               REGISTER LINK
-          ========================= */}
+          ================================================= */}
           <p className="pm-auth-footer">
 
             New to ParkMate?{" "}

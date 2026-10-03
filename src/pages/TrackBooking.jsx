@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   MapContainer,
   TileLayer,
@@ -15,7 +16,10 @@ const TrackBooking = () => {
 
   const loadBookings = async () => {
     try {
-      const response = await api.get(`/bookings/details/user/${user.id}`);
+      const response = await api.get(
+        `/bookings/details/user/${user.id}`
+      );
+
       setBookings(response.data);
     } catch (error) {
       console.log(error);
@@ -25,7 +29,9 @@ const TrackBooking = () => {
   const requestReturn = async (bookingId) => {
     try {
       await api.put(`/bookings/${bookingId}/request-return`);
+
       alert("Return Requested");
+
       loadBookings();
     } catch (error) {
       console.log(error);
@@ -44,7 +50,9 @@ const TrackBooking = () => {
     if (status === "ASSIGNED") return styles.assigned;
     if (status === "PICKED_UP") return styles.active;
     if (status === "RETURNING") return styles.returning;
-    if (status === "RETURN_REQUESTED") return styles.returnRequested;
+    if (status === "RETURN_REQUESTED")
+      return styles.returnRequested;
+
     return styles.defaultStatus;
   };
 
@@ -56,6 +64,7 @@ const TrackBooking = () => {
         <div style={styles.header}>
           <div>
             <h1 style={styles.title}>Track Vehicle</h1>
+
             <p style={styles.subtitle}>
               View your booking status, OTP, vehicle location, and return request.
             </p>
@@ -70,145 +79,222 @@ const TrackBooking = () => {
         {bookings.length === 0 && (
           <div style={styles.emptyBox}>
             <h2>No Bookings Found</h2>
-            <p>Create a parking request to track your vehicle.</p>
+
+            <p>
+              Create a parking request to track your vehicle.
+            </p>
           </div>
         )}
 
         <div style={styles.grid}>
-          {bookings.map((booking) => (
-            <div key={booking.id} style={styles.bookingCard}>
-              <div style={styles.cardTop}>
-                <div>
-                  <h2 style={styles.bookingTitle}>Booking #{booking.id}</h2>
-                  <p style={styles.smallText}>
-                    {booking.vehicleNumber || "Unknown Vehicle"}
-                    {booking.vehicleType ? ` · ${booking.vehicleType}` : ""}
-                  </p>
-                </div>
+          {bookings.map((booking) => {
+            /*
+             * Some booking responses use bookingId,
+             * while others may use id.
+             *
+             * Use bookingId first and fall back to id.
+             */
+            const bookingId =
+              booking.bookingId ?? booking.id;
 
-                <span
-                  style={{
-                    ...styles.statusBadge,
-                    ...getStatusStyle(booking.status),
-                  }}
-                >
-                  {booking.status}
-                </span>
-              </div>
+            return (
+              <div
+                key={bookingId}
+                style={styles.bookingCard}
+              >
+                <div style={styles.cardTop}>
+                  <div>
+                    <h2 style={styles.bookingTitle}>
+                      Booking #{bookingId}
+                    </h2>
 
-              <div style={styles.infoGrid}>
-                <div style={styles.infoBox}>
-                  <span>OTP</span>
-                  <strong>{booking.otp}</strong>
-                </div>
+                    <p style={styles.smallText}>
+                      {booking.vehicleNumber || "Unknown Vehicle"}
 
-                <div style={styles.infoBox}>
-                  <span>Assistant</span>
-                  <strong>
-                    {booking.assistantName || "Not Assigned"}
-                  </strong>
-                </div>
-
-                <div style={styles.infoBox}>
-                  <span>Vehicle Number</span>
-                  <strong>{booking.vehicleNumber || "Not Available"}</strong>
-                </div>
-
-                <div style={styles.infoBox}>
-                  <span>Vehicle Type</span>
-                  <strong>{booking.vehicleType || "Not Available"}</strong>
-                </div>
-
-                <div style={styles.locationBox}>
-                  <span>Pickup</span>
-                  <strong>{booking.pickupLocation}</strong>
-                </div>
-
-                <div style={styles.locationBox}>
-                  <span>Parking</span>
-                  <strong>{booking.parkingLocation}</strong>
-                </div>
-              </div>
-
-              {booking.pickupLat && booking.parkingLat ? (
-                <div style={styles.mapBox}>
-                  <MapContainer
-                    center={[booking.pickupLat, booking.pickupLng]}
-                    zoom={16}
-                    style={{
-                      height: "280px",
-                      width: "100%",
-                      borderRadius: "14px",
-                    }}
-                  >
-                    <TileLayer
-                      attribution="&copy; OpenStreetMap contributors"
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-
-                    <Marker position={[booking.pickupLat, booking.pickupLng]} />
-                    <Marker position={[booking.parkingLat, booking.parkingLng]} />
-
-                    <Polyline
-                      positions={[
-                        [booking.pickupLat, booking.pickupLng],
-                        [booking.parkingLat, booking.parkingLng],
-                      ]}
-                    />
-                  </MapContainer>
-
-                  <div style={styles.coordinateBox}>
-                    <p>
-                      📍 Vehicle Location:{" "}
-                      {Number(booking.parkingLat).toFixed(5)},{" "}
-                      {Number(booking.parkingLng).toFixed(5)}
+                      {booking.vehicleType
+                        ? ` · ${booking.vehicleType}`
+                        : ""}
                     </p>
                   </div>
-                </div>
-              ) : (
-                <div style={styles.noMapBox}>
-                  <p>No GPS location available for this booking.</p>
-                </div>
-              )}
 
-              {booking.status === "RETURN_REQUESTED" && (
-                <div style={styles.pendingReturnBox}>
-                  ✅ Return request sent. Assistant will bring your vehicle back.
-                </div>
-              )}
-
-              {booking.status === "RETURNING" && (
-                <div style={styles.returningBox}>
-                  🚗 Assistant is returning your vehicle.
-                </div>
-              )}
-
-              {booking.status === "COMPLETED" && (
-                <div style={styles.completedBox}>
-                  ✅ Booking completed successfully.
-                </div>
-              )}
-
-              {booking.status !== "RETURN_REQUESTED" &&
-                booking.status !== "RETURNING" &&
-                booking.status !== "COMPLETED" && (
-                  <button
+                  <span
                     style={{
-                      ...styles.returnButton,
-                      ...(booking.status === "PARKED"
-                        ? styles.returnButtonActive
-                        : styles.returnButtonDisabled),
+                      ...styles.statusBadge,
+                      ...getStatusStyle(booking.status),
                     }}
-                    disabled={booking.status !== "PARKED"}
-                    onClick={() => requestReturn(booking.id)}
                   >
-                    {booking.status === "PARKED"
-                      ? "Request Vehicle Return"
-                      : "Return Available After Parking"}
-                  </button>
+                    {booking.status}
+                  </span>
+                </div>
+
+                <div style={styles.infoGrid}>
+                  <div style={styles.infoBox}>
+                    <span>OTP</span>
+
+                    <strong>
+                      {booking.otp}
+                    </strong>
+                  </div>
+
+                  <div style={styles.infoBox}>
+                    <span>Assistant</span>
+
+                    <strong>
+                      {booking.assistantName ||
+                        "Not Assigned"}
+                    </strong>
+                  </div>
+
+                  <div style={styles.infoBox}>
+                    <span>Vehicle Number</span>
+
+                    <strong>
+                      {booking.vehicleNumber ||
+                        "Not Available"}
+                    </strong>
+                  </div>
+
+                  <div style={styles.infoBox}>
+                    <span>Vehicle Type</span>
+
+                    <strong>
+                      {booking.vehicleType ||
+                        "Not Available"}
+                    </strong>
+                  </div>
+
+                  <div style={styles.locationBox}>
+                    <span>Pickup</span>
+
+                    <strong>
+                      {booking.pickupLocation}
+                    </strong>
+                  </div>
+
+                  <div style={styles.locationBox}>
+                    <span>Parking</span>
+
+                    <strong>
+                      {booking.parkingLocation}
+                    </strong>
+                  </div>
+                </div>
+
+                {booking.pickupLat &&
+                booking.parkingLat ? (
+                  <div style={styles.mapBox}>
+                    <MapContainer
+                      center={[
+                        booking.pickupLat,
+                        booking.pickupLng,
+                      ]}
+                      zoom={16}
+                      style={{
+                        height: "280px",
+                        width: "100%",
+                        borderRadius: "14px",
+                      }}
+                    >
+                      <TileLayer
+                        attribution="&copy; OpenStreetMap contributors"
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+
+                      <Marker
+                        position={[
+                          booking.pickupLat,
+                          booking.pickupLng,
+                        ]}
+                      />
+
+                      <Marker
+                        position={[
+                          booking.parkingLat,
+                          booking.parkingLng,
+                        ]}
+                      />
+
+                      <Polyline
+                        positions={[
+                          [
+                            booking.pickupLat,
+                            booking.pickupLng,
+                          ],
+                          [
+                            booking.parkingLat,
+                            booking.parkingLng,
+                          ],
+                        ]}
+                      />
+                    </MapContainer>
+
+                    <div style={styles.coordinateBox}>
+                      <p>
+                        📍 Vehicle Location:{" "}
+                        {Number(
+                          booking.parkingLat
+                        ).toFixed(5)}
+                        ,{" "}
+                        {Number(
+                          booking.parkingLng
+                        ).toFixed(5)}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={styles.noMapBox}>
+                    <p>
+                      No GPS location available for this
+                      booking.
+                    </p>
+                  </div>
                 )}
-            </div>
-          ))}
+
+                {booking.status ===
+                  "RETURN_REQUESTED" && (
+                  <div style={styles.pendingReturnBox}>
+                    ✅ Return request sent. Assistant will
+                    bring your vehicle back.
+                  </div>
+                )}
+
+                {booking.status === "RETURNING" && (
+                  <div style={styles.returningBox}>
+                    🚗 Assistant is returning your vehicle.
+                  </div>
+                )}
+
+                {booking.status === "COMPLETED" && (
+                  <div style={styles.completedBox}>
+                    ✅ Booking completed successfully.
+                  </div>
+                )}
+
+                {booking.status !== "RETURN_REQUESTED" &&
+                  booking.status !== "RETURNING" &&
+                  booking.status !== "COMPLETED" && (
+                    <button
+                      style={{
+                        ...styles.returnButton,
+                        ...(booking.status === "PARKED"
+                          ? styles.returnButtonActive
+                          : styles.returnButtonDisabled),
+                      }}
+                      disabled={
+                        booking.status !== "PARKED"
+                      }
+                      onClick={() =>
+                        requestReturn(bookingId)
+                      }
+                    >
+                      {booking.status === "PARKED"
+                        ? "Request Vehicle Return"
+                        : "Return Available After Parking"}
+                    </button>
+                  )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </>
@@ -260,7 +346,8 @@ const styles = {
 
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(430px, 1fr))",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(430px, 1fr))",
     gap: "24px",
     alignItems: "start",
   },
