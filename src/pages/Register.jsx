@@ -10,9 +10,14 @@ const Register = () => {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     phone: "",
     role: "USER",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -23,6 +28,22 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    // =========================
+    // CONFIRM PASSWORD
+    // =========================
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    // =========================
+    // PASSWORD LENGTH
+    // =========================
+    if (formData.password.length < 6) {
+      alert("Password must contain at least 6 characters.");
+      return;
+    }
 
     try {
       // =========================
@@ -54,9 +75,7 @@ const Register = () => {
 
       alert("Registration successful");
 
-      // Go to login after registration
       navigate("/login");
-
     } catch (error) {
       console.log("Registration error:", error);
 
@@ -72,11 +91,11 @@ const Register = () => {
     <div className="pm-auth-bg">
       <div className="pm-auth-card">
 
+        {/* =========================
+            HEADER
+        ========================= */}
         <div className="pm-auth-header">
 
-          {/* =========================
-              LOGO
-          ========================= */}
           <div className="pm-auth-logo">
             <img
               src={logo}
@@ -84,9 +103,6 @@ const Register = () => {
             />
           </div>
 
-          {/* =========================
-              BRAND NAME
-          ========================= */}
           <div className="pm-auth-brand-name">
             Park<span>Mate</span> Plus
           </div>
@@ -121,7 +137,6 @@ const Register = () => {
               value={formData.role}
               onChange={handleChange}
             >
-
               <option value="USER">
                 User
               </option>
@@ -129,7 +144,6 @@ const Register = () => {
               <option value="ASSISTANT">
                 Assistant
               </option>
-
             </select>
 
           </div>
@@ -184,18 +198,109 @@ const Register = () => {
               Password
             </label>
 
-            <input
-              className="pm-input"
-              name="password"
-              type="password"
-              placeholder="Create a strong password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              minLength={6}
-            />
+            <div style={styles.passwordWrapper}>
+
+              <input
+                className="pm-input"
+                name="password"
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="Create a strong password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                minLength={6}
+                style={styles.passwordInput}
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword(!showPassword)
+                }
+                style={styles.eyeButton}
+                aria-label={
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
+                }
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+
+            </div>
 
           </div>
+
+          {/* =========================
+              CONFIRM PASSWORD
+          ========================= */}
+          <div className="pm-field">
+
+            <label className="pm-label">
+              Confirm Password
+            </label>
+
+            <div style={styles.passwordWrapper}>
+
+              <input
+                className="pm-input"
+                name="confirmPassword"
+                type={
+                  showConfirmPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="Re-enter your password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                minLength={6}
+                style={styles.passwordInput}
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirmPassword(
+                    !showConfirmPassword
+                  )
+                }
+                style={styles.eyeButton}
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+              >
+                {showConfirmPassword ? "🙈" : "👁️"}
+              </button>
+
+            </div>
+
+          </div>
+
+          {/* =========================
+              PASSWORD MATCH MESSAGE
+          ========================= */}
+          {formData.confirmPassword &&
+            formData.password !==
+              formData.confirmPassword && (
+              <p style={styles.passwordError}>
+                ⚠️ Passwords do not match
+              </p>
+            )}
+
+          {formData.confirmPassword &&
+            formData.password ===
+              formData.confirmPassword && (
+              <p style={styles.passwordSuccess}>
+                ✅ Passwords match
+              </p>
+            )}
 
           {/* =========================
               PHONE
@@ -209,6 +314,7 @@ const Register = () => {
             <input
               className="pm-input"
               name="phone"
+              type="tel"
               placeholder="+91 98765 43210"
               value={formData.phone}
               onChange={handleChange}
@@ -218,13 +324,17 @@ const Register = () => {
           </div>
 
           {/* =========================
-              CREATE ACCOUNT BUTTON
+              CREATE ACCOUNT
           ========================= */}
           <div style={{ marginTop: "8px" }}>
 
             <button
               className="pm-btn pm-btn-primary pm-btn-full"
               type="submit"
+              disabled={
+                formData.password !==
+                formData.confirmPassword
+              }
             >
               Create Account
             </button>
@@ -251,6 +361,43 @@ const Register = () => {
       </div>
     </div>
   );
+};
+
+const styles = {
+  passwordWrapper: {
+    position: "relative",
+    width: "100%",
+  },
+
+  passwordInput: {
+    paddingRight: "55px",
+  },
+
+  eyeButton: {
+    position: "absolute",
+    right: "12px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "18px",
+    padding: "5px",
+  },
+
+  passwordError: {
+    color: "#ff6b6b",
+    fontSize: "13px",
+    marginTop: "-8px",
+    marginBottom: "12px",
+  },
+
+  passwordSuccess: {
+    color: "#22c55e",
+    fontSize: "13px",
+    marginTop: "-8px",
+    marginBottom: "12px",
+  },
 };
 
 export default Register;

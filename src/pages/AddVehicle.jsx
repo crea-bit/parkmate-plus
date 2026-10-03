@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
@@ -6,7 +6,12 @@ import Navbar from "../components/Navbar";
 const AddVehicle = () => {
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  const galleryInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   const [vehicle, setVehicle] = useState({
     vehicleNumber: "",
@@ -17,6 +22,8 @@ const AddVehicle = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [imageLoading, setImageLoading] =
+    useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,11 +34,144 @@ const AddVehicle = () => {
     }));
   };
 
+  // =====================================================
+  // RESIZE + CONVERT IMAGE
+  // =====================================================
+
+  const processImage = (file) => {
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image.");
+      return;
+    }
+
+    setImageLoading(true);
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const img = new Image();
+
+      img.onload = () => {
+        const maxWidth = 900;
+        const maxHeight = 900;
+
+        let width = img.width;
+        let height = img.height;
+
+        // Resize while keeping aspect ratio
+        if (width > maxWidth || height > maxHeight) {
+          const widthRatio = maxWidth / width;
+          const heightRatio = maxHeight / height;
+
+          const ratio = Math.min(
+            widthRatio,
+            heightRatio
+          );
+
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+
+        const canvas =
+          document.createElement("canvas");
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
+        );
+
+        // Convert image to compressed JPEG
+        const compressedImage =
+          canvas.toDataURL(
+            "image/jpeg",
+            0.75
+          );
+
+        setVehicle((prev) => ({
+          ...prev,
+          imageUrl: compressedImage,
+        }));
+
+        setImageLoading(false);
+      };
+
+      img.onerror = () => {
+        alert("Unable to process the selected image.");
+        setImageLoading(false);
+      };
+
+      img.src = event.target.result;
+    };
+
+    reader.onerror = () => {
+      alert("Failed to read image.");
+      setImageLoading(false);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  // =====================================================
+  // GALLERY
+  // =====================================================
+
+  const handleGalleryChange = (e) => {
+    const file = e.target.files?.[0];
+
+    processImage(file);
+
+    // Allow selecting the same image again
+    e.target.value = "";
+  };
+
+  // =====================================================
+  // CAMERA
+  // =====================================================
+
+  const handleCameraChange = (e) => {
+    const file = e.target.files?.[0];
+
+    processImage(file);
+
+    // Allow taking another photo
+    e.target.value = "";
+  };
+
+  // =====================================================
+  // REMOVE IMAGE
+  // =====================================================
+
+  const removeImage = () => {
+    setVehicle((prev) => ({
+      ...prev,
+      imageUrl: "",
+    }));
+  };
+
+  // =====================================================
+  // SUBMIT
+  // =====================================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user?.id) {
-      alert("User session expired. Please login again.");
+      alert(
+        "User session expired. Please login again."
+      );
+
       navigate("/login");
       return;
     }
@@ -42,26 +182,47 @@ const AddVehicle = () => {
       !vehicle.brand.trim() ||
       !vehicle.color.trim()
     ) {
-      alert("Please fill all required vehicle details.");
+      alert(
+        "Please fill all required vehicle details."
+      );
+
       return;
     }
 
     try {
       setLoading(true);
 
-      await api.post(`/vehicles/add/${user.id}`, {
-        vehicleNumber: vehicle.vehicleNumber.trim(),
-        vehicleType: vehicle.vehicleType.trim(),
-        brand: vehicle.brand.trim(),
-        color: vehicle.color.trim(),
-        imageUrl: vehicle.imageUrl.trim(),
-      });
+      await api.post(
+        `/vehicles/add/${user.id}`,
+        {
+          vehicleNumber:
+            vehicle.vehicleNumber.trim(),
 
-      alert("Vehicle added successfully 🚗");
+          vehicleType:
+            vehicle.vehicleType.trim(),
+
+          brand:
+            vehicle.brand.trim(),
+
+          color:
+            vehicle.color.trim(),
+
+          imageUrl:
+            vehicle.imageUrl,
+        }
+      );
+
+      alert(
+        "Vehicle added successfully 🚗"
+      );
 
       navigate("/dashboard/user");
+
     } catch (error) {
-      console.log("Add vehicle error:", error);
+      console.log(
+        "Add vehicle error:",
+        error
+      );
 
       const message =
         error.response?.data?.message ||
@@ -69,6 +230,7 @@ const AddVehicle = () => {
         "Failed to add vehicle";
 
       alert(message);
+
     } finally {
       setLoading(false);
     }
@@ -79,10 +241,19 @@ const AddVehicle = () => {
       <Navbar />
 
       <div className="pm-page-center">
+
         <div className="pm-form-card">
 
-          {/* Header */}
-          <div style={{ marginBottom: "28px" }}>
+          {/* =========================
+              HEADER
+          ========================= */}
+
+          <div
+            style={{
+              marginBottom: "28px",
+            }}
+          >
+
             <div
               style={{
                 fontSize: "2rem",
@@ -97,32 +268,51 @@ const AddVehicle = () => {
             </h2>
 
             <p className="pm-form-card-subtitle">
-              Register a new vehicle to use with ParkMate Plus
+              Register a new vehicle to use with
+              ParkMate Plus
             </p>
+
           </div>
 
-          {/* Vehicle Image Preview */}
-          {vehicle.imageUrl.trim() && (
-            <div style={{ marginBottom: "20px" }}>
+          {/* =========================
+              IMAGE PREVIEW
+          ========================= */}
+
+          {vehicle.imageUrl && (
+            <div style={styles.previewContainer}>
+
               <img
                 src={vehicle.imageUrl}
                 alt="Vehicle preview"
                 style={styles.preview}
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
               />
+
+              <button
+                type="button"
+                onClick={removeImage}
+                style={styles.removeButton}
+              >
+                ✕ Remove Photo
+              </button>
+
             </div>
           )}
 
-          {/* Form */}
+          {/* =========================
+              FORM
+          ========================= */}
+
           <form
             className="pm-form"
             onSubmit={handleSubmit}
           >
 
-            {/* Vehicle Number */}
+            {/* =========================
+                VEHICLE NUMBER
+            ========================= */}
+
             <div className="pm-field">
+
               <label className="pm-label">
                 Vehicle Number
               </label>
@@ -136,10 +326,15 @@ const AddVehicle = () => {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
-            {/* Vehicle Type */}
+            {/* =========================
+                VEHICLE TYPE
+            ========================= */}
+
             <div className="pm-field">
+
               <label className="pm-label">
                 Vehicle Type
               </label>
@@ -153,10 +348,15 @@ const AddVehicle = () => {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
-            {/* Brand */}
+            {/* =========================
+                BRAND
+            ========================= */}
+
             <div className="pm-field">
+
               <label className="pm-label">
                 Brand
               </label>
@@ -170,10 +370,15 @@ const AddVehicle = () => {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
-            {/* Color */}
+            {/* =========================
+                COLOR
+            ========================= */}
+
             <div className="pm-field">
+
               <label className="pm-label">
                 Color
               </label>
@@ -187,50 +392,167 @@ const AddVehicle = () => {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
-            {/* Image URL */}
+            {/* =========================
+                VEHICLE IMAGE
+            ========================= */}
+
             <div className="pm-field">
+
               <label className="pm-label">
-                Vehicle Image URL
+                Vehicle Image
               </label>
 
+              {/* Hidden Gallery Input */}
+
               <input
-                className="pm-input"
-                type="url"
-                name="imageUrl"
-                placeholder="Paste vehicle image URL"
-                value={vehicle.imageUrl}
-                onChange={handleChange}
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleGalleryChange}
+                style={{ display: "none" }}
               />
+
+              {/* Hidden Camera Input */}
+
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleCameraChange}
+                style={{ display: "none" }}
+              />
+
+              {/* Buttons */}
+
+              <div style={styles.imageButtons}>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    galleryInputRef.current?.click()
+                  }
+                  style={styles.imageButton}
+                  disabled={imageLoading}
+                >
+                  🖼️ Choose from Gallery
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    cameraInputRef.current?.click()
+                  }
+                  style={styles.imageButton}
+                  disabled={imageLoading}
+                >
+                  📸 Take Photo
+                </button>
+
+              </div>
+
+              <p style={styles.imageHint}>
+                Choose an existing vehicle photo or
+                take a new photo.
+              </p>
+
+              {imageLoading && (
+                <p style={styles.loadingText}>
+                  Processing image...
+                </p>
+              )}
+
             </div>
 
-            {/* Submit */}
+            {/* =========================
+                SUBMIT
+            ========================= */}
+
             <div style={{ marginTop: "8px" }}>
+
               <button
                 className="pm-btn pm-btn-primary pm-btn-full"
                 type="submit"
-                disabled={loading}
+                disabled={
+                  loading || imageLoading
+                }
               >
-                {loading ? "Adding Vehicle..." : "Add Vehicle"}
+                {loading
+                  ? "Adding Vehicle..."
+                  : "Add Vehicle"}
               </button>
+
             </div>
 
           </form>
+
         </div>
+
       </div>
     </>
   );
 };
 
 const styles = {
+  previewContainer: {
+    marginBottom: "22px",
+    textAlign: "center",
+  },
+
   preview: {
     width: "100%",
     height: "220px",
     objectFit: "cover",
     borderRadius: "14px",
-    border: "1px solid rgba(0, 194, 255, 0.25)",
+    border:
+      "1px solid rgba(0, 194, 255, 0.25)",
     display: "block",
+  },
+
+  removeButton: {
+    marginTop: "10px",
+    background: "transparent",
+    border: "1px solid rgba(255, 100, 100, 0.5)",
+    color: "#ff7777",
+    borderRadius: "10px",
+    padding: "8px 14px",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+
+  imageButtons: {
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(2, minmax(0, 1fr))",
+    gap: "12px",
+  },
+
+  imageButton: {
+    padding: "14px 10px",
+    borderRadius: "12px",
+    border:
+      "1px solid rgba(0, 194, 255, 0.35)",
+    background: "#111827",
+    color: "white",
+    cursor: "pointer",
+    fontWeight: "600",
+    fontSize: "14px",
+  },
+
+  imageHint: {
+    color: "#9db4cc",
+    fontSize: "13px",
+    marginTop: "10px",
+    lineHeight: "1.5",
+  },
+
+  loadingText: {
+    color: "#00c2ff",
+    fontSize: "13px",
+    marginTop: "8px",
   },
 };
 
