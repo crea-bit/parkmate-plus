@@ -20,21 +20,46 @@ const api = axios.create({
 // =====================================================
 
 const getToken = () => {
-  /*
-   * Assistant login may store the token using different
-   * localStorage keys depending on the login implementation.
-   *
-   * Priority:
-   * 1. assistantToken
-   * 2. token
-   * 3. userToken
-   */
+  // Check which account is actually logged in.
+  // USER login uses "token".
+  // ASSISTANT login uses "assistantToken".
 
-  const assistantToken = localStorage.getItem("assistantToken");
+  const user = localStorage.getItem("user");
+  const assistant = localStorage.getItem("assistant");
 
-  if (assistantToken) {
-    return assistantToken;
+  // ---------------------------------------------------
+  // USER
+  // ---------------------------------------------------
+
+  if (user) {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      return token;
+    }
+
+    const userToken = localStorage.getItem("userToken");
+
+    if (userToken) {
+      return userToken;
+    }
   }
+
+  // ---------------------------------------------------
+  // ASSISTANT
+  // ---------------------------------------------------
+
+  if (assistant) {
+    const assistantToken = localStorage.getItem("assistantToken");
+
+    if (assistantToken) {
+      return assistantToken;
+    }
+  }
+
+  // ---------------------------------------------------
+  // FALLBACK
+  // ---------------------------------------------------
 
   const token = localStorage.getItem("token");
 
@@ -48,21 +73,44 @@ const getToken = () => {
     return userToken;
   }
 
+  const assistantToken = localStorage.getItem("assistantToken");
+
+  if (assistantToken) {
+    return assistantToken;
+  }
+
   return null;
 };
 
 // =====================================================
 // REQUEST INTERCEPTOR
-// Attach JWT to EVERY API request
 // =====================================================
 
 api.interceptors.request.use(
   (config) => {
     const token = getToken();
 
+    // -------------------------------------------------
+    // Attach JWT
+    // -------------------------------------------------
+
     if (token) {
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // -------------------------------------------------
+    // IMPORTANT FOR CLOUDINARY / FORM DATA
+    //
+    // Axios must NOT force application/json when
+    // sending FormData.
+    //
+    // Browser will automatically create:
+    // multipart/form-data; boundary=...
+    // -------------------------------------------------
+
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
     }
 
     return config;
@@ -84,9 +132,9 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
 
-    // -------------------------------------------------
+    // =================================================
     // 401 = TOKEN INVALID / EXPIRED
-    // -------------------------------------------------
+    // =================================================
 
     if (status === 401) {
       localStorage.removeItem("token");
@@ -99,20 +147,22 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
 
-    // -------------------------------------------------
-    // 403 = AUTHENTICATED BUT WRONG ROLE
-    // IMPORTANT:
-    // Do NOT logout automatically here.
-    // -------------------------------------------------
+    // =================================================
+    // 403 = FORBIDDEN
+    // =================================================
 
     if (status === 403) {
       console.error(
-        "403 Forbidden - Check Assistant JWT / role / endpoint permissions"
+        "403 Forbidden - Check JWT role / endpoint permissions"
       );
     }
 
     return Promise.reject(error);
   }
 );
+
+// =====================================================
+// EXPORT
+// =====================================================
 
 export default api;

@@ -19,11 +19,15 @@ const AddVehicle = () => {
     brand: "",
     color: "",
     imageUrl: "",
+    imageFile: null,
   });
 
   const [loading, setLoading] = useState(false);
-  const [imageLoading, setImageLoading] =
-    useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
+
+  // =====================================================
+  // HANDLE TEXT INPUT
+  // =====================================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +39,7 @@ const AddVehicle = () => {
   };
 
   // =====================================================
-  // RESIZE + CONVERT IMAGE
+  // RESIZE + COMPRESS IMAGE
   // =====================================================
 
   const processImage = (file) => {
@@ -62,7 +66,7 @@ const AddVehicle = () => {
         let width = img.width;
         let height = img.height;
 
-        // Resize while keeping aspect ratio
+        // Keep original aspect ratio
         if (width > maxWidth || height > maxHeight) {
           const widthRatio = maxWidth / width;
           const heightRatio = maxHeight / height;
@@ -76,8 +80,7 @@ const AddVehicle = () => {
           height = Math.round(height * ratio);
         }
 
-        const canvas =
-          document.createElement("canvas");
+        const canvas = document.createElement("canvas");
 
         canvas.width = width;
         canvas.height = height;
@@ -92,23 +95,48 @@ const AddVehicle = () => {
           height
         );
 
-        // Convert image to compressed JPEG
-        const compressedImage =
-          canvas.toDataURL(
-            "image/jpeg",
-            0.75
-          );
+        // =====================================================
+        // CREATE COMPRESSED JPEG FILE
+        // =====================================================
 
-        setVehicle((prev) => ({
-          ...prev,
-          imageUrl: compressedImage,
-        }));
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              alert("Unable to process image.");
+              setImageLoading(false);
+              return;
+            }
 
-        setImageLoading(false);
+            const compressedFile = new File(
+              [blob],
+              "vehicle-photo.jpg",
+              {
+                type: "image/jpeg",
+              }
+            );
+
+            // Preview image
+            const previewUrl =
+              URL.createObjectURL(blob);
+
+            setVehicle((prev) => ({
+              ...prev,
+              imageUrl: previewUrl,
+              imageFile: compressedFile,
+            }));
+
+            setImageLoading(false);
+          },
+          "image/jpeg",
+          0.75
+        );
       };
 
       img.onerror = () => {
-        alert("Unable to process the selected image.");
+        alert(
+          "Unable to process the selected image."
+        );
+
         setImageLoading(false);
       };
 
@@ -132,7 +160,7 @@ const AddVehicle = () => {
 
     processImage(file);
 
-    // Allow selecting the same image again
+    // Allow same image to be selected again
     e.target.value = "";
   };
 
@@ -157,6 +185,7 @@ const AddVehicle = () => {
     setVehicle((prev) => ({
       ...prev,
       imageUrl: "",
+      imageFile: null,
     }));
   };
 
@@ -192,23 +221,62 @@ const AddVehicle = () => {
     try {
       setLoading(true);
 
-      await api.post(
-        `/vehicles/add/${user.id}`,
+      // =====================================================
+      // CREATE FORM DATA
+      // =====================================================
+
+      const formData = new FormData();
+
+      // Vehicle JSON
+      const vehicleData = {
+        vehicleNumber:
+          vehicle.vehicleNumber.trim(),
+
+        vehicleType:
+          vehicle.vehicleType.trim(),
+
+        brand:
+          vehicle.brand.trim(),
+
+        color:
+          vehicle.color.trim(),
+      };
+
+      const vehicleBlob = new Blob(
+        [JSON.stringify(vehicleData)],
         {
-          vehicleNumber:
-            vehicle.vehicleNumber.trim(),
+          type: "application/json",
+        }
+      );
 
-          vehicleType:
-            vehicle.vehicleType.trim(),
+      formData.append(
+        "vehicle",
+        vehicleBlob
+      );
 
-          brand:
-            vehicle.brand.trim(),
+      // =====================================================
+      // ADD IMAGE FILE
+      // =====================================================
 
-          color:
-            vehicle.color.trim(),
+      if (vehicle.imageFile) {
+        formData.append(
+          "image",
+          vehicle.imageFile
+        );
+      }
 
-          imageUrl:
-            vehicle.imageUrl,
+      // =====================================================
+      // SEND TO BACKEND
+      // =====================================================
+
+      await api.post(
+        "/vehicles/add",
+        formData,
+        {
+          headers: {
+            "Content-Type":
+              "multipart/form-data",
+          },
         }
       );
 
@@ -274,12 +342,17 @@ const AddVehicle = () => {
 
           </div>
 
+
           {/* =========================
               IMAGE PREVIEW
           ========================= */}
 
           {vehicle.imageUrl && (
-            <div style={styles.previewContainer}>
+            <div
+              style={
+                styles.previewContainer
+              }
+            >
 
               <img
                 src={vehicle.imageUrl}
@@ -298,6 +371,7 @@ const AddVehicle = () => {
             </div>
           )}
 
+
           {/* =========================
               FORM
           ========================= */}
@@ -307,9 +381,7 @@ const AddVehicle = () => {
             onSubmit={handleSubmit}
           >
 
-            {/* =========================
-                VEHICLE NUMBER
-            ========================= */}
+            {/* VEHICLE NUMBER */}
 
             <div className="pm-field">
 
@@ -322,16 +394,17 @@ const AddVehicle = () => {
                 type="text"
                 name="vehicleNumber"
                 placeholder="e.g. MH 01 AB 1234"
-                value={vehicle.vehicleNumber}
+                value={
+                  vehicle.vehicleNumber
+                }
                 onChange={handleChange}
                 required
               />
 
             </div>
 
-            {/* =========================
-                VEHICLE TYPE
-            ========================= */}
+
+            {/* VEHICLE TYPE */}
 
             <div className="pm-field">
 
@@ -344,16 +417,17 @@ const AddVehicle = () => {
                 type="text"
                 name="vehicleType"
                 placeholder="e.g. Sedan, SUV, Hatchback"
-                value={vehicle.vehicleType}
+                value={
+                  vehicle.vehicleType
+                }
                 onChange={handleChange}
                 required
               />
 
             </div>
 
-            {/* =========================
-                BRAND
-            ========================= */}
+
+            {/* BRAND */}
 
             <div className="pm-field">
 
@@ -373,9 +447,8 @@ const AddVehicle = () => {
 
             </div>
 
-            {/* =========================
-                COLOR
-            ========================= */}
+
+            {/* COLOR */}
 
             <div className="pm-field">
 
@@ -395,6 +468,7 @@ const AddVehicle = () => {
 
             </div>
 
+
             {/* =========================
                 VEHICLE IMAGE
             ========================= */}
@@ -405,48 +479,68 @@ const AddVehicle = () => {
                 Vehicle Image
               </label>
 
-              {/* Hidden Gallery Input */}
+
+              {/* Gallery */}
 
               <input
                 ref={galleryInputRef}
                 type="file"
                 accept="image/*"
-                onChange={handleGalleryChange}
-                style={{ display: "none" }}
+                onChange={
+                  handleGalleryChange
+                }
+                style={{
+                  display: "none",
+                }}
               />
 
-              {/* Hidden Camera Input */}
+
+              {/* Camera */}
 
               <input
                 ref={cameraInputRef}
                 type="file"
                 accept="image/*"
                 capture="environment"
-                onChange={handleCameraChange}
-                style={{ display: "none" }}
+                onChange={
+                  handleCameraChange
+                }
+                style={{
+                  display: "none",
+                }}
               />
+
 
               {/* Buttons */}
 
-              <div style={styles.imageButtons}>
+              <div
+                style={
+                  styles.imageButtons
+                }
+              >
 
                 <button
                   type="button"
                   onClick={() =>
                     galleryInputRef.current?.click()
                   }
-                  style={styles.imageButton}
+                  style={
+                    styles.imageButton
+                  }
                   disabled={imageLoading}
                 >
                   🖼️ Choose from Gallery
                 </button>
+
 
                 <button
                   type="button"
                   onClick={() =>
                     cameraInputRef.current?.click()
                   }
-                  style={styles.imageButton}
+                  style={
+                    styles.imageButton
+                  }
                   disabled={imageLoading}
                 >
                   📸 Take Photo
@@ -454,10 +548,12 @@ const AddVehicle = () => {
 
               </div>
 
+
               <p style={styles.imageHint}>
-                Choose an existing vehicle photo or
-                take a new photo.
+                Choose an existing vehicle
+                photo or take a new photo.
               </p>
+
 
               {imageLoading && (
                 <p style={styles.loadingText}>
@@ -467,22 +563,30 @@ const AddVehicle = () => {
 
             </div>
 
+
             {/* =========================
                 SUBMIT
             ========================= */}
 
-            <div style={{ marginTop: "8px" }}>
+            <div
+              style={{
+                marginTop: "8px",
+              }}
+            >
 
               <button
                 className="pm-btn pm-btn-primary pm-btn-full"
                 type="submit"
                 disabled={
-                  loading || imageLoading
+                  loading ||
+                  imageLoading
                 }
               >
+
                 {loading
-                  ? "Adding Vehicle..."
+                  ? "Uploading Vehicle..."
                   : "Add Vehicle"}
+
               </button>
 
             </div>
@@ -496,7 +600,13 @@ const AddVehicle = () => {
   );
 };
 
+
+// =====================================================
+// STYLES
+// =====================================================
+
 const styles = {
+
   previewContainer: {
     marginBottom: "22px",
     textAlign: "center",
@@ -515,7 +625,8 @@ const styles = {
   removeButton: {
     marginTop: "10px",
     background: "transparent",
-    border: "1px solid rgba(255, 100, 100, 0.5)",
+    border:
+      "1px solid rgba(255, 100, 100, 0.5)",
     color: "#ff7777",
     borderRadius: "10px",
     padding: "8px 14px",
