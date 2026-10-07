@@ -10,179 +10,614 @@ import {
 import api from "../services/api";
 import Navbar from "../components/Navbar";
 
+
 const TrackBooking = () => {
+
   const user = JSON.parse(localStorage.getItem("user"));
+
   const [bookings, setBookings] = useState([]);
 
+  // =========================================================
+  // PAYMENT STATE
+  // =========================================================
+
+  const [paymentStatus, setPaymentStatus] = useState({});
+
+  const [paymentLoading, setPaymentLoading] = useState({});
+
+
+  // =========================================================
+  // LOAD PAYMENT STATUS
+  // =========================================================
+
+  const loadPaymentStatus = async (bookingList) => {
+
+    const completedBookings = bookingList.filter(
+      (booking) => booking.status === "COMPLETED"
+    );
+
+    const statusMap = {};
+
+    for (const booking of completedBookings) {
+
+      const bookingId =
+        booking.bookingId ?? booking.id;
+
+      try {
+
+        const response = await api.get(
+          `/payments/status/${bookingId}`
+        );
+
+        statusMap[bookingId] =
+          response.data.status;
+
+      } catch (error) {
+
+        console.log(
+          "Payment status error:",
+          error
+        );
+
+        statusMap[bookingId] = "NOT_PAID";
+      }
+    }
+
+    setPaymentStatus(statusMap);
+  };
+
+
+  // =========================================================
+  // LOAD BOOKINGS
+  // =========================================================
+
   const loadBookings = async () => {
+
     try {
+
       const response = await api.get(
         `/bookings/details/user/${user.id}`
       );
 
       setBookings(response.data);
+
+      await loadPaymentStatus(response.data);
+
     } catch (error) {
+
       console.log(error);
+
     }
   };
 
+
+  // =========================================================
+  // REQUEST VEHICLE RETURN
+  // =========================================================
+
   const requestReturn = async (bookingId) => {
+
     try {
-      await api.put(`/bookings/${bookingId}/request-return`);
+
+      await api.put(
+        `/bookings/${bookingId}/request-return`
+      );
 
       alert("Return Requested");
 
-      loadBookings();
+      await loadBookings();
+
     } catch (error) {
+
       console.log(error);
-      alert("Failed to request return");
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to request return"
+      );
     }
   };
 
+
+  // =========================================================
+  // LOAD RAZORPAY CHECKOUT SCRIPT
+  // =========================================================
+
+  const loadRazorpayScript = () => {
+
+    return new Promise((resolve) => {
+
+      if (window.Razorpay) {
+
+        resolve(true);
+
+        return;
+      }
+
+      const script =
+        document.createElement("script");
+
+      script.src =
+        "https://checkout.razorpay.com/v1/checkout.js";
+
+      script.onload = () => resolve(true);
+
+      script.onerror = () => resolve(false);
+
+      document.body.appendChild(script);
+    });
+  };
+
+
+  // =========================================================
+  // PAY NOW
+  // =========================================================
+
+  const payNow = async (bookingId) => {
+
+    try {
+
+      setPaymentLoading((prev) => ({
+        ...prev,
+        [bookingId]: true,
+      }));
+
+
+      // =====================================================
+      // 1. LOAD RAZORPAY
+      // =====================================================
+
+      const loaded =
+        await loadRazorpayScript();
+
+      if (!loaded) {
+
+        alert(
+          "Razorpay Checkout could not be loaded."
+        );
+
+        return;
+      }
+
+
+      // =====================================================
+      // 2. CREATE RAZORPAY ORDER
+      // =====================================================
+
+      const orderResponse =
+        await api.post(
+          `/payments/create-order/${bookingId}`
+        );
+
+      const order =
+        orderResponse.data;
+
+
+      // =====================================================
+      // 3. OPEN RAZORPAY CHECKOUT
+      // =====================================================
+
+      const options = {
+
+        key: order.keyId,
+
+        amount: order.amount,
+
+        currency: order.currency,
+
+        name: "ParkMate Plus",
+
+        description:
+          `Parking Service - Booking #${bookingId}`,
+
+        order_id: order.orderId,
+
+
+        // ===================================================
+        // PAYMENT SUCCESS CALLBACK
+        // ===================================================
+
+        handler: async function (response) {
+
+          try {
+
+            // ===============================================
+            // 4. SEND PAYMENT DETAILS TO BACKEND
+            // ===============================================
+
+            const verifyResponse =
+              await api.post(
+                "/payments/verify",
+                {
+                  bookingId: bookingId,
+
+                  razorpayOrderId:
+                    response.razorpay_order_id,
+
+                  razorpayPaymentId:
+                    response.razorpay_payment_id,
+
+                  razorpaySignature:
+                    response.razorpay_signature,
+
+                  paymentMethod:
+                    "RAZORPAY",
+                }
+              );
+
+
+            // ===============================================
+            // 5. PAYMENT VERIFIED
+            // ===============================================
+
+            alert(
+              "Payment Successful!\n\n" +
+              "Payment ID: " +
+              verifyResponse.data.paymentId
+            );
+
+
+            // Update UI immediately
+            setPaymentStatus((prev) => ({
+              ...prev,
+              [bookingId]: "PAID",
+            }));
+
+
+            // Refresh booking/payment data
+            await loadBookings();
+
+          } catch (error) {
+
+            console.log(
+              "Payment verification error:",
+              error
+            );
+
+            alert(
+              error.response?.data?.message ||
+              "Payment verification failed."
+            );
+
+          } finally {
+
+            setPaymentLoading((prev) => ({
+              ...prev,
+              [bookingId]: false,
+            }));
+          }
+        },
+
+
+        // ===================================================
+        // CHECKOUT CLOSED
+        // ===================================================
+
+        modal: {
+
+          ondismiss: function () {
+
+            console.log(
+              "Razorpay checkout closed"
+            );
+
+            setPaymentLoading((prev) => ({
+              ...prev,
+              [bookingId]: false,
+            }));
+          },
+        },
+
+
+        // ===================================================
+        // RAZORPAY CHECKOUT THEME
+        // ===================================================
+
+        theme: {
+          color: "#00c2ff",
+        },
+      };
+
+
+      const razorpay =
+        new window.Razorpay(options);
+
+
+      razorpay.open();
+
+
+    } catch (error) {
+
+      console.log(
+        "Payment error:",
+        error
+      );
+
+      alert(
+        error.response?.data?.message ||
+        "Unable to start payment."
+      );
+
+      setPaymentLoading((prev) => ({
+        ...prev,
+        [bookingId]: false,
+      }));
+    }
+  };
+
+
+  // =========================================================
+  // INITIAL LOAD
+  // =========================================================
+
   useEffect(() => {
+
     loadBookings();
+
   }, []);
 
+
+  // =========================================================
+  // STATUS STYLE
+  // =========================================================
+
   const getStatusStyle = (status) => {
-    if (status === "COMPLETED") return styles.completed;
-    if (status === "PARKED") return styles.parked;
-    if (status === "REQUESTED") return styles.requested;
-    if (status === "ASSIGNED") return styles.assigned;
-    if (status === "PICKED_UP") return styles.active;
-    if (status === "RETURNING") return styles.returning;
+
+    if (status === "COMPLETED")
+      return styles.completed;
+
+    if (status === "PARKED")
+      return styles.parked;
+
+    if (status === "REQUESTED")
+      return styles.requested;
+
+    if (status === "ASSIGNED")
+      return styles.assigned;
+
+    if (status === "PICKED_UP")
+      return styles.active;
+
+    if (status === "RETURNING")
+      return styles.returning;
+
     if (status === "RETURN_REQUESTED")
       return styles.returnRequested;
 
     return styles.defaultStatus;
   };
 
+
+  // =========================================================
+  // PAGE
+  // =========================================================
+
   return (
     <>
       <Navbar />
 
       <div style={styles.page}>
+
+        {/* ===================================================
+            HEADER
+        ==================================================== */}
+
         <div style={styles.header}>
+
           <div>
-            <h1 style={styles.title}>Track Vehicle</h1>
+
+            <h1 style={styles.title}>
+              Track Vehicle
+            </h1>
 
             <p style={styles.subtitle}>
-              View your booking status, OTP, vehicle location, and return request.
+              View your booking status, OTP,
+              vehicle location, and return request.
             </p>
+
           </div>
+
 
           <div style={styles.summaryCard}>
-            <h2>{bookings.length}</h2>
-            <p>Total Bookings</p>
-          </div>
-        </div>
 
-        {bookings.length === 0 && (
-          <div style={styles.emptyBox}>
-            <h2>No Bookings Found</h2>
+            <h2>
+              {bookings.length}
+            </h2>
 
             <p>
-              Create a parking request to track your vehicle.
+              Total Bookings
             </p>
+
+          </div>
+
+        </div>
+
+
+        {/* ===================================================
+            EMPTY BOOKINGS
+        ==================================================== */}
+
+        {bookings.length === 0 && (
+
+          <div style={styles.emptyBox}>
+
+            <h2>
+              No Bookings Found
+            </h2>
+
+            <p>
+              Create a parking request to track
+              your vehicle.
+            </p>
+
           </div>
         )}
 
+
+        {/* ===================================================
+            BOOKING GRID
+        ==================================================== */}
+
         <div style={styles.grid}>
+
           {bookings.map((booking) => {
+
             /*
              * Some booking responses use bookingId,
              * while others may use id.
              *
              * Use bookingId first and fall back to id.
              */
+
             const bookingId =
               booking.bookingId ?? booking.id;
 
+
             return (
+
               <div
                 key={bookingId}
                 style={styles.bookingCard}
               >
+
+                {/* =========================================
+                    CARD HEADER
+                ========================================== */}
+
                 <div style={styles.cardTop}>
+
                   <div>
+
                     <h2 style={styles.bookingTitle}>
                       Booking #{bookingId}
                     </h2>
 
                     <p style={styles.smallText}>
-                      {booking.vehicleNumber || "Unknown Vehicle"}
+
+                      {booking.vehicleNumber ||
+                        "Unknown Vehicle"}
 
                       {booking.vehicleType
                         ? ` · ${booking.vehicleType}`
                         : ""}
+
                     </p>
+
                   </div>
+
 
                   <span
                     style={{
                       ...styles.statusBadge,
-                      ...getStatusStyle(booking.status),
+                      ...getStatusStyle(
+                        booking.status
+                      ),
                     }}
                   >
                     {booking.status}
                   </span>
+
                 </div>
 
+
+                {/* =========================================
+                    BOOKING INFORMATION
+                ========================================== */}
+
                 <div style={styles.infoGrid}>
+
                   <div style={styles.infoBox}>
-                    <span>OTP</span>
+
+                    <span>
+                      OTP
+                    </span>
 
                     <strong>
                       {booking.otp}
                     </strong>
+
                   </div>
 
+
                   <div style={styles.infoBox}>
-                    <span>Assistant</span>
+
+                    <span>
+                      Assistant
+                    </span>
 
                     <strong>
                       {booking.assistantName ||
                         "Not Assigned"}
                     </strong>
+
                   </div>
 
+
                   <div style={styles.infoBox}>
-                    <span>Vehicle Number</span>
+
+                    <span>
+                      Vehicle Number
+                    </span>
 
                     <strong>
                       {booking.vehicleNumber ||
                         "Not Available"}
                     </strong>
+
                   </div>
 
+
                   <div style={styles.infoBox}>
-                    <span>Vehicle Type</span>
+
+                    <span>
+                      Vehicle Type
+                    </span>
 
                     <strong>
                       {booking.vehicleType ||
                         "Not Available"}
                     </strong>
+
                   </div>
 
+
                   <div style={styles.locationBox}>
-                    <span>Pickup</span>
+
+                    <span>
+                      Pickup
+                    </span>
 
                     <strong>
                       {booking.pickupLocation}
                     </strong>
+
                   </div>
 
+
                   <div style={styles.locationBox}>
-                    <span>Parking</span>
+
+                    <span>
+                      Parking
+                    </span>
 
                     <strong>
                       {booking.parkingLocation}
                     </strong>
+
                   </div>
+
                 </div>
+
+
+                {/* =========================================
+                    MAP
+                ========================================== */}
 
                 {booking.pickupLat &&
                 booking.parkingLat ? (
+
                   <div style={styles.mapBox}>
+
                     <MapContainer
                       center={[
                         booking.pickupLat,
@@ -195,10 +630,12 @@ const TrackBooking = () => {
                         borderRadius: "14px",
                       }}
                     >
+
                       <TileLayer
                         attribution="&copy; OpenStreetMap contributors"
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       />
+
 
                       <Marker
                         position={[
@@ -207,12 +644,14 @@ const TrackBooking = () => {
                         ]}
                       />
 
+
                       <Marker
                         position={[
                           booking.parkingLat,
                           booking.parkingLng,
                         ]}
                       />
+
 
                       <Polyline
                         positions={[
@@ -226,88 +665,208 @@ const TrackBooking = () => {
                           ],
                         ]}
                       />
+
                     </MapContainer>
 
-                    <div style={styles.coordinateBox}>
+
+                    <div
+                      style={styles.coordinateBox}
+                    >
+
                       <p>
+
                         📍 Vehicle Location:{" "}
+
                         {Number(
                           booking.parkingLat
                         ).toFixed(5)}
+
                         ,{" "}
+
                         {Number(
                           booking.parkingLng
                         ).toFixed(5)}
+
                       </p>
+
                     </div>
+
                   </div>
+
                 ) : (
-                  <div style={styles.noMapBox}>
+
+                  <div
+                    style={styles.noMapBox}
+                  >
+
                     <p>
-                      No GPS location available for this
-                      booking.
+                      No GPS location available
+                      for this booking.
                     </p>
+
                   </div>
                 )}
+
+
+                {/* =========================================
+                    RETURN REQUESTED
+                ========================================== */}
 
                 {booking.status ===
                   "RETURN_REQUESTED" && (
-                  <div style={styles.pendingReturnBox}>
-                    ✅ Return request sent. Assistant will
-                    bring your vehicle back.
+
+                  <div
+                    style={
+                      styles.pendingReturnBox
+                    }
+                  >
+
+                    ✅ Return request sent.
+                    Assistant will bring your
+                    vehicle back.
+
                   </div>
                 )}
 
-                {booking.status === "RETURNING" && (
-                  <div style={styles.returningBox}>
-                    🚗 Assistant is returning your vehicle.
+
+                {/* =========================================
+                    RETURNING
+                ========================================== */}
+
+                {booking.status ===
+                  "RETURNING" && (
+
+                  <div
+                    style={
+                      styles.returningBox
+                    }
+                  >
+
+                    🚗 Assistant is returning
+                    your vehicle.
+
                   </div>
                 )}
 
-                {booking.status === "COMPLETED" && (
-                  <div style={styles.completedBox}>
-                    ✅ Booking completed successfully.
+
+                {/* =========================================
+                    COMPLETED
+                ========================================== */}
+
+                {booking.status ===
+                  "COMPLETED" && (
+
+                  <div
+                    style={
+                      styles.completedBox
+                    }
+                  >
+
+                    ✅ Booking completed
+                    successfully.
+
                   </div>
                 )}
 
-                {booking.status !== "RETURN_REQUESTED" &&
-                  booking.status !== "RETURNING" &&
-                  booking.status !== "COMPLETED" && (
-                    <button
-                      style={{
-                        ...styles.returnButton,
-                        ...(booking.status === "PARKED"
-                          ? styles.returnButtonActive
-                          : styles.returnButtonDisabled),
-                      }}
-                      disabled={
-                        booking.status !== "PARKED"
-                      }
-                      onClick={() =>
-                        requestReturn(bookingId)
-                      }
-                    >
-                      {booking.status === "PARKED"
-                        ? "Request Vehicle Return"
-                        : "Return Available After Parking"}
-                    </button>
-                  )}
+
+                {/* =========================================================
+    PAYMENT SECTION
+========================================================= */}
+
+{booking.status === "COMPLETED" && (
+  <div style={styles.paymentSection}>
+
+    {paymentStatus[bookingId] === "PAID" ? (
+      <div style={styles.paymentSuccessBox}>
+        ✅ Payment Completed
+      </div>
+    ) : (
+      <button
+        type="button"
+        style={styles.payButton}
+        onClick={() => payNow(bookingId)}
+        disabled={paymentLoading[bookingId]}
+      >
+        {paymentLoading[bookingId]
+          ? "Processing..."
+          : "💳 Pay Now ₹100"}
+      </button>
+    )}
+
+  </div>
+)}
+
+
+                {/* =========================================
+                    RETURN BUTTON
+                ========================================== */}
+
+                {booking.status !==
+                  "RETURN_REQUESTED" &&
+
+                  booking.status !==
+                    "RETURNING" &&
+
+                  booking.status !==
+                    "COMPLETED" && (
+
+                  <button
+                    style={{
+                      ...styles.returnButton,
+
+                      ...(booking.status ===
+                        "PARKED"
+                        ? styles.returnButtonActive
+                        : styles.returnButtonDisabled),
+                    }}
+
+                    disabled={
+                      booking.status !==
+                      "PARKED"
+                    }
+
+                    onClick={() =>
+                      requestReturn(
+                        bookingId
+                      )
+                    }
+                  >
+
+                    {booking.status ===
+                      "PARKED"
+
+                      ? "Request Vehicle Return"
+
+                      : "Return Available After Parking"}
+
+                  </button>
+                )}
+
               </div>
             );
           })}
+
         </div>
+
       </div>
     </>
   );
 };
 
+
+// =========================================================
+// STYLES
+// =========================================================
+
 const styles = {
+
   page: {
     minHeight: "100vh",
     background: "#0f1720",
     color: "white",
     padding: "38px",
   },
+
 
   header: {
     display: "flex",
@@ -318,31 +877,38 @@ const styles = {
     flexWrap: "wrap",
   },
 
+
   title: {
     fontSize: "36px",
     marginBottom: "8px",
   },
+
 
   subtitle: {
     color: "#9db4cc",
     fontSize: "16px",
   },
 
+
   summaryCard: {
     background: "#1f2937",
-    border: "1px solid rgba(0,194,255,0.3)",
+    border:
+      "1px solid rgba(0,194,255,0.3)",
     borderRadius: "16px",
     padding: "20px 28px",
     textAlign: "center",
     minWidth: "160px",
   },
 
+
   emptyBox: {
     background: "#1f2937",
     padding: "30px",
     borderRadius: "16px",
-    border: "1px solid rgba(0,194,255,0.2)",
+    border:
+      "1px solid rgba(0,194,255,0.2)",
   },
+
 
   grid: {
     display: "grid",
@@ -352,13 +918,17 @@ const styles = {
     alignItems: "start",
   },
 
+
   bookingCard: {
     background: "#1f2937",
     borderRadius: "18px",
     padding: "24px",
-    border: "1px solid rgba(0,194,255,0.18)",
-    boxShadow: "0 10px 28px rgba(0,0,0,0.25)",
+    border:
+      "1px solid rgba(0,194,255,0.18)",
+    boxShadow:
+      "0 10px 28px rgba(0,0,0,0.25)",
   },
+
 
   cardTop: {
     display: "flex",
@@ -368,15 +938,18 @@ const styles = {
     marginBottom: "20px",
   },
 
+
   bookingTitle: {
     margin: 0,
     fontSize: "26px",
   },
 
+
   smallText: {
     color: "#9db4cc",
     marginTop: "6px",
   },
+
 
   statusBadge: {
     padding: "8px 12px",
@@ -386,60 +959,87 @@ const styles = {
     whiteSpace: "nowrap",
   },
 
+
   completed: {
-    background: "rgba(34,197,94,0.18)",
+    background:
+      "rgba(34,197,94,0.18)",
     color: "#22c55e",
-    border: "1px solid rgba(34,197,94,0.5)",
+    border:
+      "1px solid rgba(34,197,94,0.5)",
   },
+
 
   parked: {
-    background: "rgba(0,194,255,0.18)",
+    background:
+      "rgba(0,194,255,0.18)",
     color: "#00c2ff",
-    border: "1px solid rgba(0,194,255,0.5)",
+    border:
+      "1px solid rgba(0,194,255,0.5)",
   },
+
 
   requested: {
-    background: "rgba(245,158,11,0.18)",
+    background:
+      "rgba(245,158,11,0.18)",
     color: "#f59e0b",
-    border: "1px solid rgba(245,158,11,0.5)",
+    border:
+      "1px solid rgba(245,158,11,0.5)",
   },
+
 
   assigned: {
-    background: "rgba(168,85,247,0.18)",
+    background:
+      "rgba(168,85,247,0.18)",
     color: "#a855f7",
-    border: "1px solid rgba(168,85,247,0.5)",
+    border:
+      "1px solid rgba(168,85,247,0.5)",
   },
+
 
   active: {
-    background: "rgba(59,130,246,0.18)",
+    background:
+      "rgba(59,130,246,0.18)",
     color: "#60a5fa",
-    border: "1px solid rgba(59,130,246,0.5)",
+    border:
+      "1px solid rgba(59,130,246,0.5)",
   },
+
 
   returning: {
-    background: "rgba(245,158,11,0.18)",
+    background:
+      "rgba(245,158,11,0.18)",
     color: "#f59e0b",
-    border: "1px solid rgba(245,158,11,0.5)",
+    border:
+      "1px solid rgba(245,158,11,0.5)",
   },
+
 
   returnRequested: {
-    background: "rgba(251,113,133,0.18)",
+    background:
+      "rgba(251,113,133,0.18)",
     color: "#fb7185",
-    border: "1px solid rgba(251,113,133,0.5)",
+    border:
+      "1px solid rgba(251,113,133,0.5)",
   },
 
+
   defaultStatus: {
-    background: "rgba(148,163,184,0.18)",
+    background:
+      "rgba(148,163,184,0.18)",
     color: "#cbd5e1",
-    border: "1px solid rgba(148,163,184,0.5)",
+    border:
+      "1px solid rgba(148,163,184,0.5)",
   },
+
 
   infoGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
+    gridTemplateColumns:
+      "repeat(2, 1fr)",
     gap: "12px",
     marginBottom: "18px",
   },
+
 
   infoBox: {
     background: "#111827",
@@ -449,6 +1049,7 @@ const styles = {
     flexDirection: "column",
     gap: "5px",
   },
+
 
   locationBox: {
     background: "#111827",
@@ -460,9 +1061,11 @@ const styles = {
     gap: "5px",
   },
 
+
   mapBox: {
     marginTop: "15px",
   },
+
 
   coordinateBox: {
     background: "#111827",
@@ -472,6 +1075,7 @@ const styles = {
     color: "#9db4cc",
   },
 
+
   noMapBox: {
     background: "#111827",
     padding: "20px",
@@ -479,6 +1083,7 @@ const styles = {
     color: "#9db4cc",
     marginTop: "12px",
   },
+
 
   returnButton: {
     marginTop: "18px",
@@ -490,11 +1095,13 @@ const styles = {
     fontSize: "15px",
   },
 
+
   returnButtonActive: {
     background: "#00c2ff",
     color: "#07111d",
     cursor: "pointer",
   },
+
 
   returnButtonDisabled: {
     background: "#334155",
@@ -502,35 +1109,82 @@ const styles = {
     cursor: "not-allowed",
   },
 
+
   pendingReturnBox: {
     marginTop: "18px",
-    background: "rgba(251,113,133,0.14)",
+    background:
+      "rgba(251,113,133,0.14)",
     color: "#fb7185",
-    border: "1px solid rgba(251,113,133,0.4)",
+    border:
+      "1px solid rgba(251,113,133,0.4)",
     padding: "13px",
     borderRadius: "12px",
     fontWeight: "bold",
   },
+
 
   returningBox: {
     marginTop: "18px",
-    background: "rgba(245,158,11,0.14)",
+    background:
+      "rgba(245,158,11,0.14)",
     color: "#f59e0b",
-    border: "1px solid rgba(245,158,11,0.4)",
+    border:
+      "1px solid rgba(245,158,11,0.4)",
     padding: "13px",
     borderRadius: "12px",
     fontWeight: "bold",
   },
 
+
   completedBox: {
     marginTop: "18px",
-    background: "rgba(34,197,94,0.14)",
+    background:
+      "rgba(34,197,94,0.14)",
     color: "#22c55e",
-    border: "1px solid rgba(34,197,94,0.4)",
+    border:
+      "1px solid rgba(34,197,94,0.4)",
     padding: "13px",
     borderRadius: "12px",
     fontWeight: "bold",
   },
+
+
+  // =======================================================
+  // PAYMENT STYLES
+  // =======================================================
+
+  paymentSection: {
+    marginTop: "14px",
+  },
+
+
+  payButton: {
+    width: "100%",
+    padding: "14px",
+    borderRadius: "12px",
+    border: "none",
+    background: "#00c2ff",
+    color: "#07111d",
+    fontWeight: "bold",
+    fontSize: "15px",
+    cursor: "pointer",
+  },
+
+
+  paymentSuccessBox: {
+    width: "100%",
+    boxSizing: "border-box",
+    background:
+      "rgba(34,197,94,0.14)",
+    color: "#22c55e",
+    border:
+      "1px solid rgba(34,197,94,0.4)",
+    padding: "13px",
+    borderRadius: "12px",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 };
+
 
 export default TrackBooking;
